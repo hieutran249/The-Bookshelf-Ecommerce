@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="https://www.thymeleaf.org"
+      xmlns:sec="https://www.thymeleaf.org/thymeleaf-extras-springsecurity6">
+
+<head th:replace="~{admin-fragments :: header}">
+</head>
+
+<body id="page-top">
+
+<!-- Page Wrapper -->
+<div id="wrapper">
+
+    <!-- Sidebar -->
+    <ul th:replace="~{admin-fragments :: sidebar}"></ul>
+    <!-- End of Sidebar -->
+
+    <!-- Content Wrapper -->
+    <div id="content-wrapper" class="d-flex flex-column">
+
+        <!-- Main Content -->
+        <div id="content">
+
+            <!-- Topbar -->
+            <nav th:replace="~{admin-fragments :: topbar}"></nav>
+            <!-- End of Topbar -->
+
+            <!-- Begin Page Content -->
+            <a th:href="@{/admin/books}" class="btn btn-primary mb-2 ml-2">
+                <i class="fas fa-long-arrow-alt-left"></i> Back
+            </a>
+            <div th:if="${type == 'success'}" class="alert alert-success text-center">
+                <p th:text="${detail}" class="text-center"></p>
+            </div>
+            <div th:if="${type == 'error'}" class="alert alert-danger text-center">
+                <p th:text="${detail}" class="text-center"></p>
+            </div>
+            <h5 class="ml-3 text-center">Update book here!</h5>
+            <form class="form container-sm" th:action="@{/admin/books/update}" method="post" th:object="${book}"
+                  enctype="multipart/form-data">
+                <div class="form-row">
+                    <div class="form-group mb-2 col-md-1">
+                        <label for="idEdit" class="col-form-label">ID</label>
+                        <input type="text" class="form-control" id="idEdit" name="id" readonly th:field="*{id}">
+                    </div>
+                    <div class="form-group mb-2 col-md-5">
+                        <label for="title" class="col-form-label">Title</label>
+                        <input type="text"
+                               class="form-control"
+                               id="title"
+                               name="title"
+                               th:field="*{title}"
+                               placeholder="Title"
+                        >
+                    </div>
+                    <div class="form-group mb-2 col">
+                        <label for="author" class="col-form-label">Author</label>
+                        <input type="text"
+                               class="form-control"
+                               id="author"
+                               name="author"
+                               th:field="*{author}"
+                               placeholder="Author"
+                        >
+                    </div>
+                </div>
+
+                <div class="form-group mb-2">
+                    <label for="description" class="col-form-label">Description</label>
+                    <input type="text"
+                           class="form-control"
+                           id="description"
+                           name="description"
+                           th:field="*{description}"
+                           placeholder="Description"
+                    >
+                </div>
+                <div class="form-row">
+                    <div class="form-group mb-2 col-md-5">
+                        <label for="price" class="col-form-label">Price</label>
+                        <input type="text"
+                               class="form-control"
+                               id="price"
+                               name="price"
+                               th:field="*{price}"
+                               placeholder="Price"
+                        >
+                    </div>
+                    <div class="form-group mb-2 col">
+                        <label for="publishedYear" class="col-form-label">Published Year</label>
+                        <input type="text"
+                               class="form-control"
+                               id="publishedYear"
+                               name="publishedYear"
+                               th:field="*{publishedYear}"
+                               placeholder="Publish year"
+                        >
+                    </div>
+                    <div class="form-group mb-2 col-md-1">
+                        <label for="quantity" class="col-form-label">Quantity</label>
+                        <input type="number"
+                               class="form-control"
+                               id="quantity"
+                               name="quantity"
+                               min="1"
+                               th:field="*{quantity}"
+                               placeholder="Quantity"
+                        >
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="form-group mb-2 col">
+                        <label for="category" class="col-form-label">Category</label>
+                        <select class="form-control"
+                                id="category"
+                                name="category"
+                                th:field="*{category}"
+                        >
+                            <option th:each="category : ${categories}" th:value="${category.id}"
+                                    th:text="${category.name}"/>
+                        </select>
+                    </div>
+                    <div class="form-group mb-2 col-1">
+                        <img class="" style="height: 100px; width: 60px;"
+                             th:src="'data:image/jpeg;base64,' + ${book.image}">
+                    </div>
+                    <div class="form-group mb-2 col-md-5">
+                        <label for="product-image" class="col-form-label">Image</label>
+                        <input type="file"
+                               class="form-control-file"
+                               id="product-image"
+                               name="product-image"
+                        >
+                    </div>
+                </div>
+
+                <button type="submit" class="btn btn-primary mb-2">Save</button>
+
+                <p class="alert alert-danger text-center" th:if="${#fields.hasErrors('title')}"
+                   th:errors="*{title}">
+                </p>
+                <p class="alert alert-danger text-center" th:if="${#fields.hasErrors('description')}"
+                   th:errors="*{description}">
+                </p>
+                <p class="alert alert-danger text-center" th:if="${#fields.hasErrors('publishedYear')}"
+                   th:errors="*{publishedYear}">
+                </p>
+
+            </form>
+            <!-- End of Page Content -->
+
+        </div>
+        <!-- End of Main Content -->
+
+        <!-- Footer -->
+        <footer th:replace="~{admin-fragments :: footer}"></footer>
+        <!-- End of Footer -->
+
+    </div>
+    <!-- End of Content Wrapper -->
+
+</div>
+<!-- End of Page Wrapper -->
+
+<!-- Scroll to Top Button-->
+<a th:replace="~{admin-fragments :: scroll_to_top}"></a>
+
+<!-- Logout Modal-->
+<div th:replace="~{admin-fragments :: logout_modal}"></div>
+
+<!-- Scripts -->
+<th:block th:replace="~{admin-fragments :: script}"></th:block>
+
+</body>
+
+</html>

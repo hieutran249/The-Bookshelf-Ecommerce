@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="https://www.thymeleaf.org"
+      xmlns:sec="https://www.thymeleaf.org/thymeleaf-extras-springsecurity6">
+<head>
+    <meta charset="UTF-8">
+    <title>The BookShelf</title>
+    <link rel="stylesheet" th:href="@{/css/Mycss.css}">
+</head>
+<body>
+    <h1>The BookShelf</h1>
+    <div sec:authorize="isAnonymous()">
+        <p>Not logged in</p>
+    </div>
+    <div sec:authorize="isAuthenticated()">
+        <p>Logged user: <span sec:authentication="name"> </span></p>
+    </div>
+</body>
+</html>
