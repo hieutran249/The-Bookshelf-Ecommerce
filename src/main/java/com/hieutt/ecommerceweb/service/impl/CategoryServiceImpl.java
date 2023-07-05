@@ -1,12 +1,15 @@
 package com.hieutt.ecommerceweb.service.impl;
 
 import com.hieutt.ecommerceweb.dto.CategoryDto;
+import com.hieutt.ecommerceweb.entity.Book;
 import com.hieutt.ecommerceweb.entity.Category;
 import com.hieutt.ecommerceweb.exception.ResourceNotFoundException;
 import com.hieutt.ecommerceweb.repository.CategoryRepository;
 import com.hieutt.ecommerceweb.service.CategoryService;
-import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.util.HashMap;
@@ -42,6 +45,16 @@ public class CategoryServiceImpl implements CategoryService {
     @Override
     public List<CategoryDto> getAllCategories() {
         List<Category> categories = categoryRepository.findAll();
+        return categories.stream()
+                .map(category -> mapToDto(category))
+                .collect(Collectors.toList());
+    }
+
+    @Override
+    public List<CategoryDto> getAllCategories(int pageNo) {
+        Pageable pageable = PageRequest.of(pageNo, 5);
+        Page<Category> categoryPage = categoryRepository.findAll(pageable);
+        List<Category> categories = categoryPage.getContent();
         return categories.stream()
                 .map(category -> mapToDto(category))
                 .collect(Collectors.toList());

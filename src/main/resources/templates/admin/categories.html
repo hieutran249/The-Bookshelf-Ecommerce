@@ -19,73 +19,107 @@
 
         <!-- Main Content -->
         <div id="content">
-
             <!-- Topbar -->
             <nav th:replace="~{admin-fragments :: topbar}"></nav>
             <!-- End of Topbar -->
 
             <!-- Begin Page Content -->
-            <div th:if="${type == 'success'}" class="alert alert-success text-center">
-                <p th:text="${detail}" class="text-center"></p>
-            </div>
-            <div th:if="${type == 'error'}" class="alert alert-danger text-center">
-                <p th:text="${detail}" class="text-center"></p>
-            </div>
-
-            <!-- Validation errors -->
-            <p class="alert alert-danger text-center" th:each="err : ${fieldErrors}" th:text="${err}"></p>
-
-            <h5 class="ml-3">Add new category here!</h5>
-
-            <!-- Create Category form -->
-            <form class="form-inline ml-3" th:action="@{/admin/categories}" method="post" th:object="${category}">
-                <div class="form-group mb-2">
-                    <input type="text"
-                           class="form-control"
-                           id="name"
-                           name="name"
-                           th:field="*{name}"
-                           placeholder="Category Name"
-                    >
+            <div class="container-fluid">
+                <div th:if="${type == 'success'}" class="alert alert-success text-center">
+                    <p th:text="${detail}" class="text-center"></p>
                 </div>
-                <button type="submit" class="btn btn-primary mb-2 ml-2">Create Category</button>
-            </form>
+                <div th:if="${type == 'error'}" class="alert alert-danger text-center">
+                    <p th:text="${detail}" class="text-center"></p>
+                </div>
 
-            <!-- Category list -->
-            <p th:if="${size == 0}" class="ml-3">There is no category in the database 😕</p>
-            <table class="table table-striped" th:if="${size > 0}">
-                <thead>
-                <tr>
-                    <th scope="col">ID</th>
-                    <th scope="col">Category Name</th>
-                    <th scope="col">Deleted</th>
-                    <th scope="col">Update Category</th>
-                    <th scope="col">Delete Category</th>
-                </tr>
-                </thead>
-                <tbody>
-                <tr th:each="category : ${categories}">
-                    <th scope="row" th:text="${category.id}"></th>
-                    <td th:text="${category.name}"></td>
-                    <td th:text="${category.deleted}"></td>
-                    <td>
-                        <a id="editButton"
-                           th:href="@{/admin/categories/update-form/{id}(id = ${category.id})}"
-                           class="btn btn-warning">Update</a>
-                    </td>
-                    <td>
-                        <button th:if="${!category.deleted}" type="button" class="btn btn-danger" data-toggle="modal"
-                                th:attr="data-target=${'#deleteModal' + category.id}"
-                                th:attrappend="data-row=${category}">Delete
-                        </button>
-                        <button th:if="${category.deleted}" type="button" class="btn btn-success" data-toggle="modal"
-                                th:attr="data-target=${'#deleteModal' + category.id}"
-                                th:attrappend="data-row=${category}">Restore
-                        </button>
-                    </td>
-                </tr>
-                </tbody>
-            </table>
+                <!-- Validation errors -->
+                <p class="alert alert-danger text-center" th:each="err : ${fieldErrors}" th:text="${err}"></p>
+
+                <h5>Add new category here!</h5>
+
+                <!-- Create Category form -->
+                <form class="form-inline" th:action="@{/admin/categories}" method="post" th:object="${category}">
+                    <div class="form-group mb-2">
+                        <input type="text"
+                               class="form-control"
+                               id="name"
+                               name="name"
+                               th:field="*{name}"
+                               placeholder="Category Name"
+                        >
+                    </div>
+                    <button type="submit" class="btn btn-primary mb-2 ml-2">Create Category</button>
+                </form>
+
+                <!-- Category list -->
+                <p th:if="${size == 0}" class="ml-3">There is no category in the database 😕</p>
+                <div class="card shadow mb-4">
+                    <div class="card-header py-3">
+                        <h6 class="m-0 font-weight-bold text-primary">Category List</h6>
+                    </div>
+                    <div class="card-body">
+                        <div class="table-responsive">
+                            <table class="table table-striped" th:if="${size > 0}"
+                                   style="width: 100%; border-spacing: 0">
+                                <thead>
+                                    <tr>
+                                        <th scope="col">ID</th>
+                                        <th scope="col">Category Name</th>
+                                        <th scope="col">Deleted</th>
+                                        <th scope="col">Update Category</th>
+                                        <th scope="col">Delete Category</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr th:each="category : ${categories}">
+                                        <th scope="row" th:text="${category.id}"></th>
+                                        <td th:text="${category.name}"></td>
+                                        <td th:text="${category.deleted}"></td>
+                                        <td>
+                                            <a id="editButton"
+                                               th:href="@{/admin/categories/update-form/{id}(id = ${category.id})}"
+                                               class="btn btn-warning">Update</a>
+                                        </td>
+                                        <td>
+                                            <button th:if="${!category.deleted}" type="button"
+                                                    class="btn btn-danger"
+                                                    data-toggle="modal"
+                                                    th:attr="data-target=${'#deleteModal' + category.id}"
+                                                    th:attrappend="data-row=${category}">Delete
+                                            </button>
+                                            <button th:if="${category.deleted}" type="button"
+                                                    class="btn btn-success"
+                                                    data-toggle="modal"
+                                                    th:attr="data-target=${'#deleteModal' + category.id}"
+                                                    th:attrappend="data-row=${category}">Restore
+                                            </button>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Pagination -->
+                <nav aria-label="..." th:class="float-right">
+                    <ul class="pagination">
+                        <li class="page-item" th:classappend="${pageNo == 0} ? 'disabled' : ''">
+                            <a class="page-link" th:href="@{'/admin/categories?pageNo=' + ${pageNo - 1}}" tabindex="-1">Previous</a>
+                        </li>
+                        <li th:each="i : ${#numbers.sequence(1, totalPage)}"
+                            th:classappend="${pageNo == i - 1 ? 'active' : ''}" class="page-item">
+                            <a th:href="@{'/admin/categories?pageNo=' + ${i - 1}}" class="page-link">
+                                <span th:text="${i}"></span>
+                            </a>
+                        </li>
+                        <li class="page-item" th:classappend="${pageNo == totalPage - 1} ? 'disabled' : ''">
+                            <a class="page-link" th:href="@{'/admin/categories?pageNo=' + ${pageNo + 1}}" tabindex="-1">Next</a>
+                        </li>
+                    </ul>
+                </nav>
+
+            </div>
 
             <!-- End of Page Content -->
 

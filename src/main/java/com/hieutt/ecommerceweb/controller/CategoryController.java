@@ -25,11 +25,14 @@ public class CategoryController {
     }
 
     @GetMapping
-    public String getAllCategories(Model model) {
+    public String getAllCategories(Model model, @RequestParam(value = "pageNo") int pageNo) {
         model.addAttribute("title", "Manage Categories");
-        List<CategoryDto> categories = categoryService.getAllCategories();
+        List<CategoryDto> allCategories = categoryService.getAllCategories();
+        List<CategoryDto> categories = categoryService.getAllCategories(pageNo);
         model.addAttribute("categories", categories);
         model.addAttribute("size", categories.size());
+        model.addAttribute("pageNo", pageNo);
+        model.addAttribute("totalPage", (int) Math.ceil(allCategories.size()/5f));
         model.addAttribute("category", new CategoryDto());
         return "/admin/categories";
     }

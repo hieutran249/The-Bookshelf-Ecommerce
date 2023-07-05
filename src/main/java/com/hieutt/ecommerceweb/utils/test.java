@@ -7,7 +7,6 @@ import java.util.EnumSet;
 
 public class test {
     public static void main(String[] args) {
-        BCryptPasswordEncoder bCryptPasswordEncoder = new BCryptPasswordEncoder();
-        System.out.println(bCryptPasswordEncoder.encode("1234"));
+        System.out.println((int) Math.ceil(5/3f));
     }
 }

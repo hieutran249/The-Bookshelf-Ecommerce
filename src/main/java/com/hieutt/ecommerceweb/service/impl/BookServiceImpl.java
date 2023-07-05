@@ -2,37 +2,34 @@ package com.hieutt.ecommerceweb.service.impl;
 
 import com.hieutt.ecommerceweb.dto.BookDto;
 import com.hieutt.ecommerceweb.entity.Book;
+import com.hieutt.ecommerceweb.entity.Category;
 import com.hieutt.ecommerceweb.exception.ResourceNotFoundException;
 import com.hieutt.ecommerceweb.repository.BookRepository;
+import com.hieutt.ecommerceweb.repository.CategoryRepository;
 import com.hieutt.ecommerceweb.service.BookService;
+import com.hieutt.ecommerceweb.utils.Constants;
 import com.hieutt.ecommerceweb.utils.ImageUpload;
-import com.sun.mail.util.BASE64EncoderStream;
-import jakarta.validation.Valid;
 import org.modelmapper.ModelMapper;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.*;
 import org.springframework.stereotype.Service;
-import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
-import java.util.Base64;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
 public class BookServiceImpl implements BookService {
     private final BookRepository bookRepository;
+    private final CategoryRepository categoryRepository;
     private final ModelMapper modelMapper = new ModelMapper();
     private final Map<String, String> message;
     private final ImageUpload imageUpload;
 
 
-    public BookServiceImpl(BookRepository bookRepository, ImageUpload imageUpload) {
+    public BookServiceImpl(BookRepository bookRepository, CategoryRepository categoryRepository, ImageUpload imageUpload) {
         this.bookRepository = bookRepository;
+        this.categoryRepository = categoryRepository;
         this.imageUpload = imageUpload;
         this.message = new HashMap<>();
     }
@@ -57,8 +54,25 @@ public class BookServiceImpl implements BookService {
     }
 
     @Override
-    public List<BookDto> getAllBooks(int pageNo) {
-        Pageable pageable = PageRequest.of(pageNo, 5);
+    public List<BookDto> getAllBooks() {
+        List<Book> books = bookRepository.findAll();
+        return books.stream()
+                .map(book -> mapToDto(book))
+                .collect(Collectors.toList());
+    }
+
+    @Override
+    public List<BookDto> getAllBooks(int pageNo, String sortBy, String sortDir) {
+        if (Objects.equals(sortBy, "null")) {
+            sortBy = Constants.DEFAULT_SORT_BY;
+        }
+        if (Objects.equals(sortDir, "null")) {
+            sortDir = Constants.DEFAULT_SORT_DIRECTION;
+        }
+        // sorting
+        Sort sort = sortDir.equalsIgnoreCase(Sort.Direction.ASC.name()) ? Sort.by(sortBy).ascending()
+                : Sort.by(sortBy).descending();
+        Pageable pageable = PageRequest.of(pageNo, 3, sort);
         Page<Book> bookPage = bookRepository.findAll(pageable);
         List<Book> books = bookPage.getContent();
         return books.stream()
@@ -113,6 +127,39 @@ public class BookServiceImpl implements BookService {
         bookRepository.save(book);
     }
 
+    @Override
+    public Page<BookDto> searchBooks(String keyword, int pageNo) {
+        List<BookDto> books = bookRepository.searchBookByAuthorOrTitleOrPublishedYear(keyword)
+                .stream()
+                .map(book -> mapToDto(book))
+                .toList();
+        Pageable pageable = PageRequest.of(pageNo, 3);
+        return toPage(books, pageable);
+    }
+
+    @Override
+    public Page<BookDto> getBooksByCategory(Long categoryId, int pageNo) {
+        Pageable pageable = PageRequest.of(pageNo, 3);
+        Category category = categoryRepository.findById(categoryId).get();
+        List<BookDto> books = bookRepository.searchAllByCategory(category)
+                .stream()
+                .map(book -> mapToDto(book))
+                .toList();
+        return toPage(books, pageable);
+    }
+
+    private Page<BookDto> toPage(List<BookDto> books, Pageable pageable) {
+        if (pageable.getOffset() >= books.size()) {
+            return Page.empty();
+        }
+        int startIndex = (int) pageable.getOffset();
+        int endIndex = ((pageable.getOffset() + pageable.getPageSize()) > books.size())
+                ? books.size()
+                : (int) (pageable.getOffset() + pageable.getPageSize());
+        List<BookDto> subList = books.subList(startIndex, endIndex);
+        return new PageImpl<>(subList, pageable, books.size());
+    }
+
     private Book findBookById(Long id) {
         return bookRepository
                 .findById(id).orElseThrow(()
@@ -122,6 +169,7 @@ public class BookServiceImpl implements BookService {
     private BookDto mapToDto(Book book) {
         return modelMapper.map(book, BookDto.class);
     }
+
     private Book mapToEntity(BookDto bookDto) {
         return modelMapper.map(bookDto, Book.class);
     }

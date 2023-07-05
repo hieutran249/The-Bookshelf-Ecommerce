@@ -8,6 +8,7 @@ import java.util.Map;
 public interface CategoryService {
     Map<String, String> createCategory(CategoryDto categoryDto);
     List<CategoryDto> getAllCategories();
+    List<CategoryDto> getAllCategories(int pageNo);
     CategoryDto getCategoryById(Long categoryId);
     Map<String, String> updateCategory(Long id, CategoryDto categoryDto);
     void deleteCategory(Long categoryId);

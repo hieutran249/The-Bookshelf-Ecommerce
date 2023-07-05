@@ -24,7 +24,7 @@ public class SecurityConfig {
     public SecurityFilterChain securityFilterChainAdmin(HttpSecurity http) throws Exception {
         http
                 // this filter chain only handle urls that have the pattern "/admin/**
-                .securityMatcher("/admin/**", "/login", "/logout")
+                .securityMatcher("/admin/**", "/login-admin", "/logout-admin")
                 .csrf().disable()
                 .authorizeHttpRequests()
                 .requestMatchers(Constants.WHITELIST_ENDPOINTS).permitAll()
@@ -35,7 +35,7 @@ public class SecurityConfig {
                 .and()
                 .formLogin()
                 .loginPage("/login-admin")
-                .loginProcessingUrl("/login")
+                .loginProcessingUrl("/login-admin")
                 .failureUrl("/login-admin?error")
                 .defaultSuccessUrl("/admin")
                 .permitAll()
@@ -44,7 +44,7 @@ public class SecurityConfig {
                 .logout()
                 .invalidateHttpSession(true)
                 .clearAuthentication(true)
-                .logoutRequestMatcher(new AntPathRequestMatcher("/logout"))
+                .logoutRequestMatcher(new AntPathRequestMatcher("/logout-admin"))
                 .logoutSuccessUrl("/login-admin?logout")
                 .permitAll()
 
