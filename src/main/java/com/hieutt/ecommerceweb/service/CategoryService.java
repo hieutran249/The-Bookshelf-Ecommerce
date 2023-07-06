@@ -13,4 +13,5 @@ public interface CategoryService {
     Map<String, String> updateCategory(Long id, CategoryDto categoryDto);
     void deleteCategory(Long categoryId);
     void restoreCategory(Long categoryId);
+    List<CategoryDto> getAllAvailableCategories();
 }

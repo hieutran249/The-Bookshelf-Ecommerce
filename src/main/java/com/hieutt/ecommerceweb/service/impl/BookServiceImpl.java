@@ -34,6 +34,7 @@ public class BookServiceImpl implements BookService {
         this.message = new HashMap<>();
     }
 
+    // ADMIN
     @Override
     public Map<String, String> createBook(BookDto bookDto, MultipartFile image) throws IOException {
         if (bookRepository.existsByTitleAndAuthor(bookDto.getTitle(), bookDto.getAuthor())) {
@@ -146,6 +147,25 @@ public class BookServiceImpl implements BookService {
                 .map(book -> mapToDto(book))
                 .toList();
         return toPage(books, pageable);
+    }
+
+
+    // CUSTOMER
+    @Override
+    public List<BookDto> getAllAvailableBooks(String sortBy, String sortDir) {
+        List<Book> books;
+        if (Objects.equals(sortBy, "price") && sortDir.equals("desc")) {
+            books = bookRepository.findByPriceDesc();
+        }
+        else if (Objects.equals(sortBy, "price") && sortDir.equals("asc")) {
+            books = bookRepository.findByPriceAsc();
+        }
+        else {
+            books = bookRepository.findAllAvailable();
+        }
+        return books.stream()
+                .map(book -> mapToDto(book))
+                .collect(Collectors.toList());
     }
 
     private Page<BookDto> toPage(List<BookDto> books, Pageable pageable) {

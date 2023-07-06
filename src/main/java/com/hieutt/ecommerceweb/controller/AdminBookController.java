@@ -1,15 +1,11 @@
 package com.hieutt.ecommerceweb.controller;
 
 import com.hieutt.ecommerceweb.dto.BookDto;
-import com.hieutt.ecommerceweb.dto.CategoryDto;
-import com.hieutt.ecommerceweb.entity.Book;
 import com.hieutt.ecommerceweb.service.BookService;
 import com.hieutt.ecommerceweb.service.CategoryService;
 import com.hieutt.ecommerceweb.utils.Constants;
 import jakarta.validation.Valid;
-import org.springframework.boot.Banner;
 import org.springframework.data.domain.Page;
-import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -17,25 +13,24 @@ import org.springframework.validation.FieldError;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
-import org.yaml.snakeyaml.scanner.Constant;
 
 import java.io.IOException;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
-import java.util.stream.Collectors;
 
 @Controller
 @RequestMapping("/admin/books")
-public class BookController {
+public class AdminBookController {
     private final BookService bookService;
     private final CategoryService categoryService;
 
-    public BookController(BookService bookService, CategoryService categoryService) {
+    public AdminBookController(BookService bookService, CategoryService categoryService) {
         this.bookService = bookService;
         this.categoryService = categoryService;
     }
 
+    // ADMIN
     @GetMapping
     public String getAllBooks(
             Model model,

@@ -1,18 +1,85 @@
 <!DOCTYPE html>
 <html lang="en" xmlns:th="https://www.thymeleaf.org"
       xmlns:sec="https://www.thymeleaf.org/thymeleaf-extras-springsecurity6">
-<head>
-    <meta charset="UTF-8">
-    <title>The BookShelf</title>
-    <link rel="stylesheet" th:href="@{/css/Mycss.css}">
-</head>
+
+<head th:replace="~{customer-fragments :: head}"></head>
+
 <body>
-    <h1>The BookShelf</h1>
-    <div sec:authorize="isAnonymous()">
-        <p>Not logged in</p>
+<!-- Start Main Top -->
+<div th:replace="~{customer-fragments :: main-top}"></div>
+<!-- End Main Top -->
+
+<!-- Start Main Header -->
+<header th:replace="~{customer-fragments :: main-header}"></header>
+<!-- End Main Header -->
+
+<!-- Start Top Search -->
+<div th:replace="~{customer-fragments :: top-search}"></div>
+<!-- End Top Search -->
+
+<!-- Start Slider -->
+<div th:replace="~{customer-fragments :: slider}"></div>
+<!-- End Slider -->
+
+<!-- Start Products  -->
+<div class="products-box">
+    <div class="container" th:each="category : ${categories}">
+        <div class="row">
+            <div class="col-lg-12">
+                <div class="title-all text-center">
+                    <h1 th:text="${category.name}"></h1>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-lg-12">
+                <div class="special-menu text-center">
+                    <div class="button-group filter-button-group">
+                        <button class="active" data-filter="*">All</button>
+                        <button data-filter=".best-seller">Best seller</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row special-list">
+            <div class="col-lg-3 col-md-6 special-grid" th:each="book : ${books}"
+                 th:if="${category.name == book.category.name}">
+                <form th:action="@{/add-to-cart}" method="post">
+                    <div class="products-single fix">
+                        <div class="box-img-hover">
+                            <img th:src="${book.image != null} ? 'data:image/jpeg;base64,' + ${book.image}
+                              : 'https://islandpress.org/sites/default/files/default_book_cover_2015.jpg'" class="img-fluid" alt="Image">
+                            <div class="mask-icon">
+                                <ul>
+                                    <li><a th:href="@{/book-detail/{id}(id = ${book.id})}" data-toggle="tooltip"
+                                           data-placement="right"
+                                           title="View"><i class="fas fa-eye"></i></a></li>
+                                </ul>
+                                <input type = "hidden" th:value = "${book.id}" name = "id" class = "form-control">
+                                <input type="submit" class="btn hvr-hover" value="Add to cart">
+                            </div>
+                        </div>
+                        <div class="why-text">
+                            <h4 th:text="${book.title}"></h4>
+                            <h5 th:text="'$' + ${book.price}"></h5>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
     </div>
-    <div sec:authorize="isAuthenticated()">
-        <p>Logged user: <span sec:authentication="name"> </span></p>
-    </div>
+</div>
+<!-- End Products  -->
+
+<!-- Start Feed -->
+<div th:replace="~{customer-fragments :: feed}"></div>
+<!-- End Feed  -->
+
+<!-- Start Footer -->
+<footer th:replace="~{customer-fragments :: footer}"></footer>
+<!-- End Footer -->
+
+<!-- Scripts -->
+<th:block th:replace="~{customer-fragments :: scripts}"></th:block>
 </body>
 </html>

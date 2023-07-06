@@ -1,11 +1,8 @@
 package com.hieutt.ecommerceweb.controller;
 
 import com.hieutt.ecommerceweb.dto.RegisterDto;
-import com.hieutt.ecommerceweb.entity.User;
-import com.hieutt.ecommerceweb.repository.UserRepository;
 import com.hieutt.ecommerceweb.service.UserService;
 import jakarta.validation.Valid;
-import org.springframework.boot.Banner;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -45,21 +42,21 @@ public class AuthController {
 
     @GetMapping("/login")
     public String customerLoginForm() {
-        return "customer/login";
+        return "customer/signin-signup";
     }
 
     @GetMapping("/register")
     public String customerRegisterForm(Model model) {
         model.addAttribute("title", "Register");
         model.addAttribute("register", new RegisterDto());
-        return "customer/register";
+        return "customer/signin-signup";
     }
 
-    @GetMapping("/forgot-password")
-    public String customerForgotPasswordForm(Model model) {
-        model.addAttribute("title", "Forgot Password");
-        return "customer/forgot-password";
-    }
+//    @GetMapping("/forgot-password")
+//    public String customerForgotPasswordForm(Model model) {
+//        model.addAttribute("title", "Forgot Password");
+//        return "customer/forgot-password";
+//    }
 
     @PostMapping("/do-register-admin")
     public String registerAdmin(@Valid @ModelAttribute(value = "register") RegisterDto registerDto,

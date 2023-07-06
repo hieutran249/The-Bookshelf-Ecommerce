@@ -11,6 +11,7 @@ import java.util.List;
 import java.util.Map;
 
 public interface BookService {
+    // ADMIN
     Map<String, String> createBook(BookDto bookDto, MultipartFile image) throws IOException;
     List<BookDto> getAllBooks();
     List<BookDto> getAllBooks(int pageNo, String sortBy, String sortDir);
@@ -20,4 +21,7 @@ public interface BookService {
     void restoreBook(Long bookId);
     Page<BookDto> searchBooks(String keyword, int pageNo);
     Page<BookDto> getBooksByCategory(Long categoryId, int pageNo);
+
+    // CUSTOMER
+    List<BookDto> getAllAvailableBooks(String sortBy, String sortDir);
 }

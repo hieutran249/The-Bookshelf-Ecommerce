@@ -96,6 +96,15 @@ public class CategoryServiceImpl implements CategoryService {
         categoryRepository.save(category);
     }
 
+    @Override
+    public List<CategoryDto> getAllAvailableCategories() {
+        List<Category> categories = categoryRepository.findAllAvailable();
+        return categories.stream()
+                .map(category -> mapToDto(category))
+                .collect(Collectors.toList());
+    }
+
+
     private Category findCategoryById(Long id) {
         return categoryRepository
                 .findById(id).orElseThrow(()
