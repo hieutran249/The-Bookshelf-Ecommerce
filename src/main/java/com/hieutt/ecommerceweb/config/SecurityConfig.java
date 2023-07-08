@@ -91,12 +91,12 @@ public class SecurityConfig {
     public SecurityFilterChain securityFilterChainAnonymous(HttpSecurity http) throws Exception {
         http
                 // this filter chain only handle anonymous urls
-                .securityMatcher("/")
+                .securityMatcher("/", "/shop/**")
                 .csrf().disable()
                 .authorizeHttpRequests()
                 .requestMatchers(Constants.WHITELIST_ENDPOINTS).permitAll()
-                .requestMatchers("/").permitAll();
-
+                .requestMatchers("/").permitAll()
+                .requestMatchers("/shop/**").permitAll();
         return http.build();
     }
 }

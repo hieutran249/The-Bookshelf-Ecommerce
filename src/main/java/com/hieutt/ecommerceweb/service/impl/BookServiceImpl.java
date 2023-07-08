@@ -17,6 +17,7 @@ import org.springframework.web.multipart.MultipartFile;
 import java.io.IOException;
 import java.util.*;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 @Service
 public class BookServiceImpl implements BookService {
@@ -154,16 +155,43 @@ public class BookServiceImpl implements BookService {
     @Override
     public List<BookDto> getAllAvailableBooks(String sortBy, String sortDir) {
         List<Book> books;
-        if (Objects.equals(sortBy, "price") && sortDir.equals("desc")) {
-            books = bookRepository.findByPriceDesc();
+        if (Objects.equals(sortBy, "price")) {
+            books = sortDir.equalsIgnoreCase("desc") ? bookRepository.findAllByPriceDesc()
+                    : bookRepository.findAllByPriceAsc();
         }
-        else if (Objects.equals(sortBy, "price") && sortDir.equals("asc")) {
-            books = bookRepository.findByPriceAsc();
+        else if (Objects.equals(sortBy, "id") && Objects.equals(sortDir, "desc")) {
+            books = bookRepository.findAllByIdDesc();
         }
         else {
             books = bookRepository.findAllAvailable();
         }
         return books.stream()
+                .map(book -> mapToDto(book))
+                .collect(Collectors.toList());
+    }
+
+    @Override
+    public List<BookDto> getAllAvailableRelatedBooks(Category category, BookDto bookDto) {
+        List<Book> books = bookRepository.findAllAvailableByCategory(category);
+        return books.stream()
+                .filter(book -> (!Objects.equals(book.getId(), bookDto.getId())))
+                .map(book -> mapToDto(book))
+                .collect(Collectors.toList());
+    }
+
+    @Override
+    public List<BookDto> getAllAvailableBooksByCategory(Long categoryId) {
+        List<Book> books = bookRepository.findAllAvailableByCategory(categoryRepository.findById(categoryId).get());
+        return books.stream()
+                .map(book -> mapToDto(book))
+                .collect(Collectors.toList());
+    }
+
+    @Override
+    public List<BookDto> searchAvailableBooks(String keyword) {
+        List<Book> books = bookRepository.searchBookByAuthorOrTitleOrPublishedYear(keyword);
+        return books.stream()
+                .filter(book -> (!book.isDeleted()))
                 .map(book -> mapToDto(book))
                 .collect(Collectors.toList());
     }

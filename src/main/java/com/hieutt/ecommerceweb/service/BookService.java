@@ -3,6 +3,7 @@ package com.hieutt.ecommerceweb.service;
 import com.hieutt.ecommerceweb.dto.BookDto;
 import com.hieutt.ecommerceweb.dto.CategoryDto;
 import com.hieutt.ecommerceweb.entity.Book;
+import com.hieutt.ecommerceweb.entity.Category;
 import org.springframework.data.domain.Page;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -24,4 +25,8 @@ public interface BookService {
 
     // CUSTOMER
     List<BookDto> getAllAvailableBooks(String sortBy, String sortDir);
+    List<BookDto> getAllAvailableRelatedBooks(Category category, BookDto bookDto);
+    List<BookDto> getAllAvailableBooksByCategory(Long categoryId);
+
+    List<BookDto> searchAvailableBooks(String keyword);
 }

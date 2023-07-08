@@ -41,15 +41,17 @@ public class AuthController {
     }
 
     @GetMapping("/login")
-    public String customerLoginForm() {
-        return "customer/signin-signup";
+    public String customerLoginForm(Model model) {
+        model.addAttribute("title", "Register");
+        model.addAttribute("register", new RegisterDto());
+        return "customer/login";
     }
 
     @GetMapping("/register")
     public String customerRegisterForm(Model model) {
         model.addAttribute("title", "Register");
         model.addAttribute("register", new RegisterDto());
-        return "customer/signin-signup";
+        return "customer/register";
     }
 
 //    @GetMapping("/forgot-password")

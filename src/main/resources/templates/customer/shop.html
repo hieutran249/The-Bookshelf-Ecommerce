@@ -34,11 +34,12 @@
                                 <select id="basic" class="selectpicker show-tick form-control"
                                         data-placeholder="$ USD" onchange="location = this.value;">
                                     <option>--Select--</option>
+                                    <option value="http://localhost:8080/shop">No Sorting</option>
+                                    <option value="http://localhost:8080/shop?sortDir=desc">Newest Books</option>
                                     <option value="http://localhost:8080/shop?sortBy=price&sortDir=desc">High Price → Low Price
                                     </option>
                                     <option value="http://localhost:8080/shop?sortBy=price">Low Price → High Price
                                     </option>
-                                    <option value="4">Best Selling</option>
                                 </select>
                             </div>
                             <p>Showing all results</p>
@@ -57,6 +58,12 @@
                         </div>
                     </div>
 
+                    <br>
+                    <h2 th:if="${books.size() == 0}">
+                        There is no such book that has that title or author or published year 🤷‍♂️
+                        Please try again 🙇‍♂️
+                    </h2>
+
                     <div class="product-categorie-box">
                         <div class="tab-content">
                             <div role="tabpanel" class="tab-pane fade show active" id="grid-view">
@@ -70,7 +77,7 @@
                                                          class="img-fluid" alt="Image">
                                                     <div class="mask-icon">
                                                         <ul>
-                                                            <li><a th:href="@{/book-detail/{id}(id = ${book.id})}"
+                                                            <li><a th:href="@{/shop/detail/{id}(id = ${book.id})}"
                                                                    data-toggle="tooltip"
                                                                    data-placement="right" title="View"><i
                                                                     class="fas fa-eye"></i></a></li>
@@ -81,8 +88,9 @@
                                                     </div>
                                                 </div>
                                                 <div class="why-text">
-                                                    <h4 th:text="${book.title}"></h4>
-                                                    <h5 th:text="'$' + ${book.price}"></h5>
+                                                    <h4 th:text="${book.title} + ' (' + ${book.publishedYear} + ')'"></h4>
+                                                    <h6 th:text="${book.author}"></h6>
+                                                    <h5 th:text="'đ' + ${book.price}"></h5>
                                                 </div>
                                             </div>
                                         </form>
@@ -106,8 +114,9 @@
                                             </div>
                                             <div class="col-sm-6 col-md-6 col-lg-8 col-xl-8">
                                                 <div class="why-text full-width">
-                                                    <h4 th:text="${book.title}"></h4>
-                                                    <h5 th:text="'$' + ${book.price}"></h5>
+                                                    <h4 th:text="${book.title} + ' (' + ${book.publishedYear} + ')'"></h4>
+                                                    <h6 th:text="${book.author}"></h6>
+                                                    <h5 th:text="'đ' + ${book.price}"></h5>
                                                     <p th:text="${book.description}"></p>
                                                     <input type="hidden" th:value="${book.id}" name="id"
                                                            class="form-control">
@@ -126,7 +135,7 @@
             <div class="col-xl-3 col-lg-3 col-sm-12 col-xs-12 sidebar-shop-left">
                 <div class="product-categori">
                     <div class="search-product">
-                        <form th:action="@{/search-product}" method="get">
+                        <form th:action="@{/shop/search}" method="get">
                             <input class="form-control" name="keyword" placeholder="Search here..." type="text">
                             <button type="submit"><i class="fa fa-search"></i></button>
                         </form>
@@ -137,7 +146,7 @@
                         </div>
                         <div class="list-group list-group-collapse list-group-sm list-group-tree"
                              id="list-group-men" data-children=".sub-men" th:each="category : ${categories}">
-                            <a th:href="@{/find-products/{id}(id = ${category.id})}"
+                            <a th:href="@{/shop/{id}(id = ${category.id})}"
                                class="list-group-item list-group-item-action"
                                th:text="${category.name + '(' + category.id + ')'}"></a>
                         </div>
@@ -164,5 +173,4 @@
 <!-- Scripts -->
 <th:block th:replace="~{customer-fragments :: scripts}"></th:block>
 </body>
-
 </html>

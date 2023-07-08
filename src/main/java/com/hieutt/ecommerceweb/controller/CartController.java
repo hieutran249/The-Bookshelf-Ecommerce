@@ -7,11 +7,11 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
-
+@RequestMapping("/customer")
 @Controller
 public class CartController {
     @PreAuthorize("hasRole('CUSTOMER')")
-    @GetMapping("/customer/cart")
+    @GetMapping("/cart")
     public String addToCart(Authentication authentication, Model model) {
         UserDetails userDetails = (UserDetails) authentication.getPrincipal();
         String user = userDetails.getUsername();

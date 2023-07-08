@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="https://www.thymeleaf.org"
+      xmlns:sec="https://www.thymeleaf.org/thymeleaf-extras-springsecurity6">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" contenteditable="width=device-width, initial-scale-1.0">
+    <link rel="stylesheet" th:href="@{/css/bootstrap.min.css}">
+    <link rel="stylesheet" th:href="@{/css/signin-signup.css}">
+    <title th:text="${title}"></title>
+</head>
+<body>
+
+<div class="container" id="container">
+    <div class="form-container sign-up-container">
+        <form th:action="@{/register}" method="post" th:object="${register}">
+            <h1>Sign Up</h1>
+            <input type="text"
+                   id="firstname"
+                   placeholder="First Name"
+                   th:field="*{firstName}">
+            <input type="text"
+                   id="lastname"
+                   placeholder="Last Name"
+                   th:field="*{lastName}">
+            <input type="email"
+                   id="username"
+                   placeholder="Email Address"
+                   th:field="*{email}">
+            <input type="password"
+                   id="password"
+                   placeholder="Password"
+                   th:field="*{password}">
+            <input type="password"
+                   id="exampleRepeatPassword"
+                   placeholder="Repeat Password"
+                   th:field="*{confirmPassword}">
+
+            <!--  Displaying Validation Errors  -->
+            <h6 class="text-danger" th:if="${#fields.hasErrors('firstName')}"
+                th:errors="*{firstName}"
+            ></h6>
+            <h6 class="text-danger" th:if="${#fields.hasErrors('lastName')}"
+                th:errors="*{lastName}"
+            ></h6>
+            <h6 class="text-danger" th:if="${#fields.hasErrors('email')}"
+                th:errors="*{email}"
+            ></h6>
+            <h6 class="text-danger" th:if="${#fields.hasErrors('password')}"
+                th:errors="*{password}"
+            ></h6>
+            <h6 class="text-danger" th:if="${#fields.hasErrors('confirmPassword')}"
+                th:errors="*{confirmPassword}"
+            ></h6>
+
+            <button type="submit">Sign Up</button>
+        </form>
+    </div>
+    <div class="form-container sign-up-container-firstpage">
+        <form th:action="@{/login}" method="post">
+            <div th:if = "${param.error}" class="alert alert-danger text-center">
+                Invalid username or password ❌
+            </div>
+            <div th:if = "${param.logout}" class="alert alert-success text-center">
+                You have been logged out ✔
+            </div>
+            <h1>Sign In</h1>
+            <span>Sign in with username and password 🔑</span>
+            <input type="email" id="username login" aria-describedby="emailHelp" name="username"
+                   placeholder="Enter Email Address...">
+            <input type="password" name="password" id="password login" placeholder="Password">
+            <button type="submit">Sign in</button>
+        </form>
+    </div>
+    <div class="overlay-container">
+        <div class="overlay">
+            <div class="overlay-panel overlay-left">
+                <h2>Welcome to</h2>
+                <h2>📚 The Bookshelf 📚</h2>
+                <button class="ghost" id="signIn">Sign In</button>
+            </div>
+            <div class="overlay-panel overlay-right">
+                <h2>Hello!</h2>
+                <p>If you don't have account, please enter your personal details to start shopping 🙆‍♂️</p>
+                <button class="ghost" id="signUp">Sign Up</button>
+            </div>
+        </div>
+    </div>
+</div>
+<script type="text/javascript" async=""
+        src="https://www.google-analytics.com/analytics.js"></script>
+<script
+        src="https://partner.googleadservices.com/gampad/cookie.js?domain=anonystick.com&amp;callback=_gfp_s_&amp;client=ca-pub-1121308659421064&amp;cookie=ID%3D30ef4963e726bc22%3AT%3D1601867713%3AS%3DALNI_MYKre9fOXFq7S33O70k_HC_rwqx-Q"></script>
+<script
+        src="https://pagead2.googlesyndication.com/pagead/js/r20201001/r20190131/show_ads_impl_fy2019.js"
+        id="google_shimpl"></script>
+<script>
+    const signUpButton = document.getElementById('signUp');
+    const container = document.getElementById('container');
+    const comeBackButton = document.getElementById('signIn');
+    signUpButton.addEventListener('click', () => {
+        container.classList.add('right-panel-active');
+    });
+    comeBackButton.addEventListener('click', () => {
+        container.classList.remove('right-panel-active');
+    });
+</script>
+</div>
+</div>
+
+</body>
+</html>

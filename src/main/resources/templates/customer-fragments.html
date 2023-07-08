@@ -15,7 +15,7 @@
     <meta name="author" content="">
 
     <!-- Site Icons -->
-    <link rel="shortcut icon" th:href="@{img/favicon.ico}" type="image/x-icon">
+    <link rel="icon" th:href="@{img/favicon.ico}" type="image/x-icon">
 
     <!-- Bootstrap CSS -->
     <link rel="stylesheet" th:href="@{/css/bootstrap.min.css}">
@@ -25,6 +25,8 @@
     <link rel="stylesheet" th:href="@{/css/responsive.css}">
     <!-- Custom CSS -->
     <link rel="stylesheet" th:href="@{/css/custom.css}">
+    <!-- Font Awesome -->
+    <link th:href="@{/vendor/fontawesome-free/css/all.min.css}" rel="stylesheet">
 
     <!--[if lt IE 9]>
     <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
@@ -46,12 +48,32 @@
                 </div>
             </div>
             <div class="col-lg-6 col-md-6 col-sm-12 col-xs-12">
-                <div class="login-box">
-                    <select id="basic" class="selectpicker show-tick form-control" data-placeholder="Sign In">
-                        <option><a href="signin-signup.html">Sign In </a></option>
-                        <option><a href="signin-signup.html">Sign Up </a></option>
-                    </select>
+                <div th:if="${user == null}" class="float-right">
+                    <a class="btn btn-warning" th:href="@{/login}">Sign In </a>
+                    <a class="btn btn-warning" th:href="@{/register}">Sign Up </a>
                 </div>
+                <div th:if="${user != null}" class="float-right">
+                    <a href="#" class="nav-link dropdown-toggle text-white" data-toggle="dropdown">
+                        <!-- if user has an avatar -->
+                        <img th:if="${#authentication.getPrincipal().getImage != null}"
+                             th:src="'data:image/jpeg;base64,' + ${#authentication.getPrincipal().getImage}"
+                             style="height: 20px; width: 50px; border-radius: 50%" alt="Image">
+                        <!-- if user has no avatar -->
+                        <img th:if="${#authentication.getPrincipal().getImage == null}" th:src="@{/img/undraw_profile.svg}"
+                             style="height: 20px; width: 30px; border-radius: 50%" alt="Image">
+                        <span th:text="${#authentication.getPrincipal().getFirstName()} + ' '
+                        + ${#authentication.getPrincipal().getLastName()}"></span>
+                        <i class="fas fa-sort-down"></i>
+                    </a>
+                    <ul class="dropdown-menu">
+                        <li><a th:href="@{/shop}">Shop Detail</a></li>
+                        <li><a th:href="@{/customer/cart}">Cart</a></li>
+                        <li><a th:href="@{/customer/checkout}">Checkout</a></li>
+                        <li><a th:href="@{/customer/my-account}">My Account</a></li>
+                        <li><a th:href="@{/logout}">Logout</a></li>
+                    </ul>
+                </div>
+
                 <div class="text-slid-box">
                     <div id="offer-box" class="carouselTicker">
                         <ul class="offer-box">
@@ -112,13 +134,12 @@
                         <a href="#" class="nav-link dropdown-toggle arrow" data-toggle="dropdown">Shop</a>
                         <ul class="dropdown-menu">
                             <li><a th:href="@{/shop}">Shop Detail</a></li>
-                            <li><a href="product-detail.html">Product Detail</a></li>
-                            <li><a href="cart.html">Cart</a></li>
-                            <li><a href="checkout.html">Checkout</a></li>
-                            <li><a href="my-account.html">My Account</a></li>
+                            <li><a th:href="@{/customer/cart}">Cart</a></li>
+                            <li><a th:href="@{/customer/checkout}">Checkout</a></li>
+                            <li><a th:href="@{/customer/my-account}">My Account</a></li>
                         </ul>
                     </li>
-                    <li class="nav-item"><a class="nav-link" href="contact-us.html">Contact Us</a></li>
+                    <li class="nav-item"><a class="nav-link" th:href="@{/customer/contact-us}">Contact Us</a></li>
                 </ul>
             </div>
             <!-- /.navbar-collapse -->
@@ -138,7 +159,7 @@
             </div>
             <!-- End Atribute Navigation -->
         </div>
-        <!-- Start Side Menu -->
+        <!-- Start Side Cart -->
         <div class="side">
             <a href="#" class="close-side"><i class="fa fa-times"></i></a>
             <li class="cart-box">
@@ -167,7 +188,7 @@
                 </ul>
             </li>
         </div>
-        <!-- End Side Menu -->
+        <!-- End Side Cart -->
     </nav>
     <!-- End Navigation -->
 </header>
@@ -176,9 +197,12 @@
 <div th:fragment="top-search" class="top-search">
     <div class="container">
         <div class="input-group">
-            <span class="input-group-addon"><i class="fa fa-search"></i></span>
-            <input type="text" class="form-control" placeholder="Search">
-            <span class="input-group-addon close-search"><i class="fa fa-times"></i></span>
+            <form th:action="@{/shop/search}" method="get" style="min-width: 100%" class="form-inline row">
+                <button type="submit" class="input-group-addon col-1"><i class="fa fa-search"></i></button>
+                <input class="form-control col-md-10" name="keyword"
+                       placeholder="Type title, author or published year ..." type="text">
+                <span class="input-group-addon close-search col-1"><i class="fa fa-times"></i></span>
+            </form>
         </div>
     </div>
 </div>
