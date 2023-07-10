@@ -54,7 +54,10 @@ public class AdminBookController {
     public String createBook(@Valid @ModelAttribute(value = "book") BookDto bookDto,
                              BindingResult result,
                              @RequestParam(value = "product-image") MultipartFile image,
-                             RedirectAttributes redirectAttributes) throws IOException {
+                             RedirectAttributes redirectAttributes,
+                             @RequestParam(value = "pageNo", defaultValue = Constants.DEFAULT_PAGE_NUMBER, required = false) int pageNo,
+                             @RequestParam(value = "sortBy", defaultValue = Constants.DEFAULT_SORT_BY, required = false) String sortBy,
+                             @RequestParam(value = "sortDir", defaultValue = Constants.DEFAULT_SORT_DIRECTION, required = false) String sortDir) throws IOException {
         Map<String, String> message;
         if (result.hasErrors()) {
             List<FieldError> fieldErrors = result.getFieldErrors();

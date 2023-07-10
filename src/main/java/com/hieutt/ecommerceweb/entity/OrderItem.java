@@ -21,7 +21,6 @@ public class OrderItem {
     private int quantity;
 
     @ManyToOne(
-            cascade = CascadeType.ALL,
             fetch = FetchType.EAGER
     )
     @JoinColumn(
@@ -31,7 +30,6 @@ public class OrderItem {
     private Book book;
 
     @ManyToOne(
-            cascade = CascadeType.ALL,
             fetch = FetchType.EAGER
     )
     @JoinColumn(

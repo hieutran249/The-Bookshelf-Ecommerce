@@ -1,5 +1,6 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" xmlns:th="https://www.thymeleaf.org"
+      xmlns:sec="https://www.thymeleaf.org/thymeleaf-extras-springsecurity6">
 <!-- Basic -->
 
 <head th:replace="~{customer-fragments :: head}"></head>
@@ -26,16 +27,16 @@
     <div class="container">
         <div class="row">
             <div class="col-sm-6 col-lg-6 mb-3">
-                <div class="checkout-address">
+                <div class="checkout-address" th:with="user=${#authentication.getPrincipal()}">
                     <div class="title-left">
                         <h3>Billing address</h3>
                     </div>
                     <form class="needs-validation" novalidate>
 
                         <div class="mb-3">
-                            <label for="username">Username *</label>
+                            <label for="email">Email *</label>
                             <div class="input-group">
-                                <input type="text" class="form-control" id="username" placeholder="" required>
+                                <input type="email" class="form-control" id="email" placeholder="" required>
                                 <div class="invalid-feedback" style="width: 100%;"> Your username is required.</div>
                             </div>
                         </div>

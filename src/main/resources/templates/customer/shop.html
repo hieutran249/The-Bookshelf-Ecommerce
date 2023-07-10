@@ -69,7 +69,7 @@
                             <div role="tabpanel" class="tab-pane fade show active" id="grid-view">
                                 <div class="row">
                                     <div class="col-sm-6 col-md-6 col-lg-4 col-xl-4" th:each="book : ${books}">
-                                        <form th:action="@{/add-to-cart}" method="post">
+                                        <form th:action="@{/customer/add-to-cart}" method="post">
                                             <div class="products-single fix">
                                                 <div class="box-img-hover">
                                                     <img th:src="${book.image != null} ? 'data:image/jpeg;base64,' + ${book.image}
@@ -90,7 +90,7 @@
                                                 <div class="why-text">
                                                     <h4 th:text="${book.title} + ' (' + ${book.publishedYear} + ')'"></h4>
                                                     <h6 th:text="${book.author}"></h6>
-                                                    <h5 th:text="'đ' + ${book.price}"></h5>
+                                                    <h5 th:text="'đ ' + ${book.price}"></h5>
                                                 </div>
                                             </div>
                                         </form>
@@ -100,7 +100,7 @@
                             <div role="tabpanel" class="tab-pane fade" id="list-view">
                                 <div class="list-view-box">
                                     <div class="row" th:each="book : ${books}">
-                                        <form class="form-inline" th:action="@{/add-to-cart}" method="post">
+                                        <form class="form-inline" th:action="@{/customer/add-to-cart}" method="post">
                                             <div class="col-sm-6 col-md-6 col-lg-4 col-xl-4">
                                                 <div class="products-single fix">
                                                     <div class="box-img-hover">
@@ -116,7 +116,7 @@
                                                 <div class="why-text full-width">
                                                     <h4 th:text="${book.title} + ' (' + ${book.publishedYear} + ')'"></h4>
                                                     <h6 th:text="${book.author}"></h6>
-                                                    <h5 th:text="'đ' + ${book.price}"></h5>
+                                                    <h5 th:text="'đ ' + ${book.price}"></h5>
                                                     <p th:text="${book.description}"></p>
                                                     <input type="hidden" th:value="${book.id}" name="id"
                                                            class="form-control">
@@ -144,6 +144,7 @@
                         <div class="title-left">
                             <h3>Categories</h3>
                         </div>
+                        <a class="list-group-item list-group-item-action" th:href="@{/shop}"><strong>All</strong></a>
                         <div class="list-group list-group-collapse list-group-sm list-group-tree"
                              id="list-group-men" data-children=".sub-men" th:each="category : ${categories}">
                             <a th:href="@{/shop/{id}(id = ${category.id})}"

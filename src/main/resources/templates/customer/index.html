@@ -23,6 +23,12 @@
 
 <!-- Start Products  -->
 <div class="products-box">
+    <div th:if="${type == 'success'}" class="alert alert-success text-center">
+        <p th:text="${detail}" class="text-center"></p>
+    </div>
+    <div th:if="${type == 'error'}" class="alert alert-danger text-center">
+        <p th:text="${detail}" class="text-center"></p>
+    </div>
     <div class="container" th:each="category : ${categories}">
         <div class="row">
             <div class="col-lg-12">
@@ -44,24 +50,24 @@
         <div class="row special-list">
             <div class="col-lg-3 col-md-6 special-grid" th:each="book : ${books}"
                  th:if="${category.name == book.category.name}">
-                <form th:action="@{/add-to-cart}" method="post">
+                <form th:action="@{/customer/add-to-cart}" method="post">
                     <div class="products-single fix">
                         <div class="box-img-hover">
                             <img th:src="${book.image != null} ? 'data:image/jpeg;base64,' + ${book.image}
                               : 'https://islandpress.org/sites/default/files/default_book_cover_2015.jpg'" class="img-fluid" alt="Image">
                             <div class="mask-icon">
                                 <ul>
-                                    <li><a th:href="@{/book-detail/{id}(id = ${book.id})}" data-toggle="tooltip"
+                                    <li><a th:href="@{/shop/detail/{id}(id = ${book.id})}" data-toggle="tooltip"
                                            data-placement="right"
                                            title="View"><i class="fas fa-eye"></i></a></li>
                                 </ul>
-                                <input type = "hidden" th:value = "${book.id}" name = "id" class = "form-control">
+                                <input type="hidden" th:value = "${book.id}" name = "id" class = "form-control">
                                 <input type="submit" class="btn hvr-hover" value="Add to cart">
                             </div>
                         </div>
                         <div class="why-text">
                             <h4 th:text="${book.title}"></h4>
-                            <h5 th:text="'$' + ${book.price}"></h5>
+                            <h5 th:text="'đ ' + ${book.price}"></h5>
                         </div>
                     </div>
                 </form>

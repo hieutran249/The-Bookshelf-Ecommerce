@@ -6,6 +6,7 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Entity
@@ -24,7 +25,6 @@ public class ShoppingCart {
     private double totalPrice;
 
     @OneToOne(
-            cascade = CascadeType.ALL,
             fetch = FetchType.LAZY
     )
     @JoinColumn(
@@ -38,5 +38,5 @@ public class ShoppingCart {
             cascade = CascadeType.ALL,
             fetch = FetchType.LAZY
     )
-    private List<CartItem> cartItemList;
+    private List<CartItem> cartItemList = new ArrayList<>();
 }

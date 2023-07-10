@@ -1,5 +1,6 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" xmlns:th="https://www.thymeleaf.org"
+      xmlns:sec="https://www.thymeleaf.org/thymeleaf-extras-springsecurity6">
 <!-- Basic -->
 
 <head th:replace="~{customer-fragments :: head}"></head>
@@ -23,19 +24,24 @@
 
 <!-- Start My Account  -->
 <div class="container">
-    <div class="row my-2">
+    <div class="row my-2" th:with="user=${#authentication.getPrincipal()}">
         <div class="col-lg-4 order-lg-1 text-center">
-            <img src="images/profile.jpg" width="200px" height="200px" class="mx-auto img-fluid img-circle d-block"
-                 alt="Profile picture"/>
+            <!-- if user has an avatar -->
+            <img th:if="${user.getImage() != null}"
+                 th:src="'data:image/jpeg;base64,' + ${user.getImage()}" width="200px" height="200px"
+                 class="mx-auto img-fluid img-circle d-block" alt="Profile picture">
+            <!-- if user has no avatar -->
+            <img th:if="${user.getImage() == null}" th:src="@{/img/profile.jpg}" width="200px" height="200px"
+                 class="mx-auto img-fluid img-circle d-block" alt="Profile picture">
         </div>
         <div class="col-lg-8 order-lg-2">
             <div class="tab-content py-4">
                 <div class="tab-pane active" id="profile">
                     <h1><b>Your Profile</b></h1>
-                    <h2>Linh Dieu <span style="font-size: medium;"></span></h2>
-                    <h4>Email: 1701040099@gmail.com</h4>
-                    <h4>Phone: 1701040099@gmail.com</h4>
-                    <h4>Address: 495 Nguyen Trai, Thanh Xuan, Ha Noi</h4>
+                    <h2 th:text="${user.getFirstName()} + ' ' + ${user.getLastName()}"></h2>
+                    <h4 th:text="'Email: ' + ${user.getEmail()}"></h4>
+                    <h4 th:text="'Phone: ' + ${user.getPhoneNumber()}"></h4>
+                    <h4 th:text="'Address: ' + ${user.getAddress()}"></h4>
                 </div>
             </div>
         </div>

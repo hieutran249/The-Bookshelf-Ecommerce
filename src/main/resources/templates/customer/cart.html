@@ -31,109 +31,68 @@
                     <table class="table">
                         <thead>
                         <tr>
-                            <th>Images</th>
-                            <th>Product Name</th>
+                            <th>Image</th>
+                            <th>Title</th>
                             <th>Price</th>
                             <th>Quantity</th>
                             <th>Total</th>
                             <th>Remove</th>
                         </tr>
                         </thead>
-                        <tbody>
+                        <tbody th:if="${session.cart.cartItemList != null}" th:each="cartItem : ${session.cart.cartItemList}">
                         <tr>
                             <td class="thumbnail-img">
-                                <a href="#">
-                                    <img class="img-fluid" src="images/Lobster 02 - Lobster rolls.jpg" alt=""/>
+                                <a th:href="@{/book-detail/{id}(id = ${cartItem.book.id})}">
+                                    <img class="img-fluid" th:src="${cartItem.book.image != null} ? 'data:image/jpeg;base64,' + ${cartItem.book.image}
+                                    : 'https://islandpress.org/sites/default/files/default_book_cover_2015.jpg'" alt=""/>
                                 </a>
                             </td>
                             <td class="name-pr">
-                                <a href="#"> Lobster rolls </a>
+                                <a th:href="@{/book-detail/{id}(id = ${cartItem.book.id})}" th:text="${cartItem.book.title}"></a>
                             </td>
                             <td class="price-pr">
-                                <p>$ 80.0</p>
+                                <p th:text="'đ ' + ${cartItem.book.price}"></p>
                             </td>
-                            <td class="quantity-box"><input type="number" size="4" value="1" min="0" step="1"
-                                                            class="c-input-text qty text"></td>
-                            <td class="total-pr">
-                                <p>$ 80.0</p>
-                            </td>
-                            <td class="remove-pr">
-                                <a href="#">
-                                    <i class="fas fa-times"></i>
-                                </a>
-                            </td>
-                        </tr>
-                        <tr>
-                            <td class="thumbnail-img">
-                                <a href="#">
-                                    <img class="img-fluid"
-                                         src="images/Octopus 05 - Octopus with Black Bean Pear Sauce.jpg" alt=""/>
-                                </a>
-                            </td>
-                            <td class="name-pr">
-                                <a href="#"> Octopus with Black Bean Pear </a>
-                            </td>
-                            <td class="price-pr">
-                                <p>$ 60.0</p>
-                            </td>
-                            <td class="quantity-box"><input type="number" size="4" value="1" min="0" step="1"
-                                                            class="c-input-text qty text"></td>
-                            <td class="total-pr">
-                                <p>$ 60.0</p>
-                            </td>
-                            <td class="remove-pr">
-                                <a href="#">
-                                    <i class="fas fa-times"></i>
-                                </a>
-                            </td>
-                        </tr>
-                        <tr>
-                            <td class="thumbnail-img">
-                                <a href="#">
-                                    <img class="img-fluid" src="images/Crab 02 - Crab Toast.jpg" alt=""/>
-                                </a>
-                            </td>
-                            <td class="name-pr">
-                                <a href="#"> Crab Toast </a>
-                            </td>
-                            <td class="price-pr">
-                                <p>$ 40.0</p>
-                            </td>
-                            <td class="quantity-box"><input type="number" size="4" value="1" min="0" step="1"
-                                                            class="c-input-text qty text"></td>
-                            <td class="total-pr">
-                                <p>$ 40.0</p>
-                            </td>
-                            <td class="remove-pr">
-                                <a href="#">
-                                    <i class="fas fa-times"></i>
-                                </a>
-                            </td>
+                            <form th:action="@{/customer/update-cart}" method="post">
+                                <input type = "hidden" name = "id" th:value = "${cartItem.id}" >
+                                <td class="quantity-box"><input type="number" size="4" th:value="${cartItem.quantity}"
+                                                                name="quantity" th:min="1" step="1"
+                                                                class="c-input-text qty text"></td>
+                                <td class="total-pr">
+                                    <p th:text="'đ ' + ${cartItem.totalPrice}"></p>
+                                </td>
+                                <td>
+                                    <button type="submit" name="action" value="update" title="Update"
+                                            class="btn btn-primary">
+                                        Update
+                                    </button>
+                                    <button type="submit" name="action" value="delete" title="Update"
+                                            class="btn btn-danger">
+                                        Delete
+                                    </button>
+                                </td>
+                            </form>
                         </tr>
                         </tbody>
                     </table>
+                    <span th:if="${session.cart.cartItemList == null}">You haven't added any book into your shopping cart 🛒</span>
                 </div>
             </div>
         </div>
 
-        <div class="row my-5">
-            <div class="col-lg-6 col-sm-6">
-                <div class="coupon-box">
-                    <div class="input-group input-group-sm">
-                        <input class="form-control" placeholder="Enter your coupon code" aria-label="Coupon code"
-                               type="text">
-                        <div class="input-group-append">
-                            <button class="btn btn-theme" type="button">Apply Coupon</button>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            <div class="col-lg-6 col-sm-6">
-                <div class="update-box">
-                    <a href="index.html"><input value="Update Cart" type="submit"></a>
-                </div>
-            </div>
-        </div>
+<!--        <div class="row my-5">-->
+<!--            <div class="col-lg-6 col-sm-6">-->
+<!--                <div class="coupon-box">-->
+<!--                    <div class="input-group input-group-sm">-->
+<!--                        <input class="form-control" placeholder="Enter your coupon code" aria-label="Coupon code"-->
+<!--                               type="text">-->
+<!--                        <div class="input-group-append">-->
+<!--                            <button class="btn btn-theme" type="button">Apply Coupon</button>-->
+<!--                        </div>-->
+<!--                    </div>-->
+<!--                </div>-->
+<!--            </div>-->
+<!--        </div>-->
 
         <div class="row my-5">
             <div class="col-lg-8 col-sm-12"></div>
@@ -142,29 +101,21 @@
                     <h3>Order summary</h3>
                     <div class="d-flex">
                         <h4>Sub Total</h4>
-                        <div class="ml-auto font-weight-bold"> $180</div>
+                        <div class="ml-auto font-weight-bold" th:text="'đ ' + ${session.cart.totalPrice}"></div>
                     </div>
-                    <div class="d-flex">
-                        <h4>Discount</h4>
-                        <div class="ml-auto font-weight-bold"> $0</div>
-                    </div>
-                    <hr class="my-1">
-                    <div class="d-flex">
-                        <h4>Coupon Discount</h4>
-                        <div class="ml-auto font-weight-bold"> $0</div>
-                    </div>
-                    <div class="d-flex">
-                        <h4>Tax</h4>
-                        <div class="ml-auto font-weight-bold"> $2</div>
-                    </div>
+                    <hr>
                     <div class="d-flex">
                         <h4>Shipping Cost</h4>
-                        <div class="ml-auto font-weight-bold"> Free</div>
+                        <div class="ml-auto font-weight-bold" th:text="${session.cart.totalPrice >= 1000000} ? 'Free'
+                        : 'đ 30000'"></div>
                     </div>
                     <hr>
                     <div class="d-flex gr-total">
                         <h5>Grand Total</h5>
-                        <div class="ml-auto h5"> $182</div>
+                        <div class="ml-auto h5" th:if="${session.cart.totalPrice >= 1000000}"
+                             th:text="đ + ${session.cart.totalPrice}"></div>
+                        <div class="ml-auto h5" th:if="${session.cart.totalPrice < 1000000}"
+                             th:text="'đ ' + ${session.cart.totalPrice + 30000}"></div>
                     </div>
                     <hr>
                 </div>

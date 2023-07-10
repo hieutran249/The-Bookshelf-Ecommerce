@@ -19,10 +19,10 @@ public class CartItem {
     private Long id;
 
     private int quantity;
+    private double totalPrice;
 
     @ManyToOne(
-            cascade = CascadeType.ALL,
-            fetch = FetchType.EAGER
+            cascade = CascadeType.ALL
     )
     @JoinColumn(
             name = "cart_id",
@@ -31,7 +31,6 @@ public class CartItem {
     private ShoppingCart shoppingCart;
 
     @ManyToOne(
-            cascade = CascadeType.ALL,
             fetch = FetchType.EAGER
     )
     @JoinColumn(

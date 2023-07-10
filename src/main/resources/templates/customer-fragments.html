@@ -48,11 +48,11 @@
                 </div>
             </div>
             <div class="col-lg-6 col-md-6 col-sm-12 col-xs-12">
-                <div th:if="${user == null}" class="float-right">
+                <div sec:authorize="isAnonymous()" class="float-right">
                     <a class="btn btn-warning" th:href="@{/login}">Sign In </a>
                     <a class="btn btn-warning" th:href="@{/register}">Sign Up </a>
                 </div>
-                <div th:if="${user != null}" class="float-right">
+                <div sec:authorize="isFullyAuthenticated()" class="float-right">
                     <a href="#" class="nav-link dropdown-toggle text-white" data-toggle="dropdown">
                         <!-- if user has an avatar -->
                         <img th:if="${#authentication.getPrincipal().getImage != null}"
@@ -67,7 +67,7 @@
                     </a>
                     <ul class="dropdown-menu">
                         <li><a th:href="@{/shop}">Shop Detail</a></li>
-                        <li><a th:href="@{/customer/cart}">Cart</a></li>
+                        <li><a th:href="@{/customer/my-cart}">Cart</a></li>
                         <li><a th:href="@{/customer/checkout}">Checkout</a></li>
                         <li><a th:href="@{/customer/my-account}">My Account</a></li>
                         <li><a th:href="@{/logout}">Logout</a></li>
@@ -129,29 +129,20 @@
                 <ul class="nav navbar-nav ml-auto" data-in="fadeInDown" data-out="fadeOutUp">
                     <li class="nav-item"><a class="nav-link" th:href="@{/home}">Home</a></li>
                     <li class="nav-item active"><a class="nav-link" th:href="@{/menu}">Menu</a></li>
-
-                    <li class="dropdown">
-                        <a href="#" class="nav-link dropdown-toggle arrow" data-toggle="dropdown">Shop</a>
-                        <ul class="dropdown-menu">
-                            <li><a th:href="@{/shop}">Shop Detail</a></li>
-                            <li><a th:href="@{/customer/cart}">Cart</a></li>
-                            <li><a th:href="@{/customer/checkout}">Checkout</a></li>
-                            <li><a th:href="@{/customer/my-account}">My Account</a></li>
-                        </ul>
-                    </li>
+                    <li class="nav-item"><a class="nav-link" th:href="@{/shop}">Shop</a></li>
                     <li class="nav-item"><a class="nav-link" th:href="@{/customer/contact-us}">Contact Us</a></li>
                 </ul>
             </div>
             <!-- /.navbar-collapse -->
 
-            <!-- Start Atribute Navigation -->
-            <div class="attr-nav">
+            <!-- Start Attribute Navigation -->
+            <div class="attr-nav" sec:authorize="isFullyAuthenticated()">
                 <ul>
                     <li class="search"><a href="#"><i class="fa fa-search"></i></a></li>
                     <li class="side-menu">
                         <a href="#">
                             <i class="fa fa-shopping-bag"></i>
-                            <span class="badge">3</span>
+                            <span class="badge" th:text="${session.cart.getQuantity()}"></span>
                             <p>My Cart</p>
                         </a>
                     </li>
@@ -160,33 +151,23 @@
             <!-- End Atribute Navigation -->
         </div>
         <!-- Start Side Cart -->
-        <div class="side">
+        <div class="side" sec:authorize="isFullyAuthenticated()">
             <a href="#" class="close-side"><i class="fa fa-times"></i></a>
-            <li class="cart-box">
-                <ul class="cart-list">
+            <li class="cart-box" th:with="cart=${session.cart}">
+                <ul class="cart-list" th:if="${cart.cartItemList != null}" th:each="cartItem : ${cart.cartItemList}">
                     <li>
-                        <a href="#" class="photo"><img src="images/Lobster 02 - Lobster rolls.jpg" class="cart-thumb"
-                                                       alt=""/></a>
-                        <h6><a href="#">Lobster rolls </a></h6>
-                        <p>1 - <span class="price">$80.00</span></p>
-                    </li>
-                    <li>
-                        <a href="#" class="photo"><img src="images/Octopus 05 - Octopus with Black Bean Pear Sauce.jpg"
-                                                       class="cart-thumb" alt=""/></a>
-                        <h6><a href="#">Octopus with Black Bean</a></h6>
-                        <p>1 - <span class="price">$60.00</span></p>
-                    </li>
-                    <li>
-                        <a href="#" class="photo"><img src="images/Crab 02 - Crab Toast.jpg" class="cart-thumb" alt=""/></a>
-                        <h6><a href="#">Crab Toast</a></h6>
-                        <p>1 - <span class="price">$40.00</span></p>
-                    </li>
-                    <li class="total">
-                        <a href="cart.html" class="btn btn-default hvr-hover btn-cart">VIEW CART</a>
-                        <span class="float-right"><strong>Total</strong>: $180.00</span>
+                        <a th:href="@{/book-detail/{id}(id = ${cartItem.book.id})}" class="photo"><img
+                                th:src="${cartItem.book.image != null} ? 'data:image/jpeg;base64,' + ${cartItem.book.image}
+                              : 'https://islandpress.org/sites/default/files/default_book_cover_2015.jpg'"
+                                class="cart-thumb" alt=""/></a>
+                        <h6><a th:href="@{/shop/detail/{id}(id = ${cartItem.book.id})}" th:text="${cartItem.book.title}"></a></h6>
+                        <p th:text="'x' + ${cartItem.quantity}"></p>
+                        <span th:text="'đ ' + ${cartItem.totalPrice}"></span>
                     </li>
                 </ul>
+                <span th:if="${cart.cartItemList == null}">You haven't added any book into your shopping cart 🛒</span>
             </li>
+            <a th:href="@{/customer/my-cart}" class="btn btn-info">Check Cart</a>
         </div>
         <!-- End Side Cart -->
     </nav>

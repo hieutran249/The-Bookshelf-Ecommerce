@@ -7,6 +7,7 @@ import org.springframework.core.annotation.Order;
 import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
+import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 
@@ -81,7 +82,10 @@ public class SecurityConfig {
                 .logoutSuccessUrl("/login?logout")
                 .permitAll()
 
-                .and().authenticationProvider(authenticationProvider);
+                .and().authenticationProvider(authenticationProvider)
+
+                .sessionManagement()
+                .sessionCreationPolicy(SessionCreationPolicy.ALWAYS);
 
         return http.build();
     }
@@ -91,12 +95,11 @@ public class SecurityConfig {
     public SecurityFilterChain securityFilterChainAnonymous(HttpSecurity http) throws Exception {
         http
                 // this filter chain only handle anonymous urls
-                .securityMatcher("/", "/shop/**")
+                .securityMatcher(Constants.ANONYMOUS_ENDPOINTS)
                 .csrf().disable()
                 .authorizeHttpRequests()
                 .requestMatchers(Constants.WHITELIST_ENDPOINTS).permitAll()
-                .requestMatchers("/").permitAll()
-                .requestMatchers("/shop/**").permitAll();
+                .requestMatchers(Constants.ANONYMOUS_ENDPOINTS).permitAll();
         return http.build();
     }
 }

@@ -42,7 +42,7 @@ public class AuthController {
 
     @GetMapping("/login")
     public String customerLoginForm(Model model) {
-        model.addAttribute("title", "Register");
+        model.addAttribute("title", "Login");
         model.addAttribute("register", new RegisterDto());
         return "customer/login";
     }

@@ -97,7 +97,7 @@
             </div>
             <div class="featured-products-box owl-carousel owl-theme">
                 <div class="item" th:each="book : ${relatedBooks}">
-                    <form th:action="@{/add-to-cart}" method="post">
+                    <form th:action="@{/customer/add-to-cart}" method="post">
                         <div class="products-single fix">
                             <div class="box-img-hover">
                                 <img th:src="${book.image != null} ? 'data:image/jpeg;base64,' + ${book.image}
@@ -116,7 +116,7 @@
                             </div>
                             <div class="why-text">
                                 <h4 th:text="${book.title}"></h4>
-                                <h5 th:text="'$' + ${book.price}"></h5>
+                                <h5 th:text="'đ ' + ${book.price}"></h5>
                             </div>
                         </div>
                     </form>

@@ -34,7 +34,6 @@ public class Order {
     private int quantity;
 
     @ManyToOne(
-            cascade = CascadeType.ALL,
             fetch = FetchType.LAZY
     )
     @JoinColumn(

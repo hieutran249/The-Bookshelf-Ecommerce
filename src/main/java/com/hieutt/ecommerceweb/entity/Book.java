@@ -52,7 +52,6 @@ public class Book {
     private boolean deleted;
 
     @ManyToOne(
-            cascade = CascadeType.ALL,
             fetch = FetchType.EAGER
     )
     @JoinColumn(

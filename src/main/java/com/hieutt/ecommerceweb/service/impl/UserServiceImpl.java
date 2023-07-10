@@ -1,10 +1,13 @@
 package com.hieutt.ecommerceweb.service.impl;
 
+import com.hieutt.ecommerceweb.dto.PasswordDto;
 import com.hieutt.ecommerceweb.dto.RegisterDto;
 import com.hieutt.ecommerceweb.dto.UserDto;
 import com.hieutt.ecommerceweb.entity.Role;
+import com.hieutt.ecommerceweb.entity.ShoppingCart;
 import com.hieutt.ecommerceweb.entity.User;
 import com.hieutt.ecommerceweb.exception.ResourceNotFoundException;
+import com.hieutt.ecommerceweb.repository.ShoppingCartRepository;
 import com.hieutt.ecommerceweb.repository.UserRepository;
 import com.hieutt.ecommerceweb.service.UserService;
 import org.modelmapper.ModelMapper;
@@ -19,12 +22,16 @@ import java.util.stream.Collectors;
 @Service
 public class UserServiceImpl implements UserService {
     private final UserRepository userRepository;
+    private final ShoppingCartRepository cartRepository;
     private final ModelMapper modelMapper = new ModelMapper();
     private final PasswordEncoder passwordEncoder;
+    private final Map<String, String> message;
 
-    public UserServiceImpl(UserRepository userRepository, PasswordEncoder passwordEncoder) {
+    public UserServiceImpl(UserRepository userRepository, ShoppingCartRepository cartRepository, PasswordEncoder passwordEncoder) {
         this.userRepository = userRepository;
+        this.cartRepository = cartRepository;
         this.passwordEncoder = passwordEncoder;
+        this.message = new HashMap<>();
     }
 
     @Override
@@ -35,10 +42,8 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public Map<String, String> createAdmin(RegisterDto registerDto) {
-        Map<String, String> message = new HashMap<>();
-
         // check if email already exist or not
-        if (checkEmailExist(registerDto)) {
+        if (userRepository.existsByEmail(registerDto.getEmail())) {
             message.put("type", "error");
             message.put("detail", "This email already exists!");
             return message;
@@ -68,10 +73,8 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public Map<String, String> createCustomer(RegisterDto registerDto) {
-        Map<String, String> message = new HashMap<>();
-
         // check if email already exist or not
-        if (checkEmailExist(registerDto)) {
+        if (userRepository.existsByEmail(registerDto.getEmail())) {
             message.put("type", "error");
             message.put("detail", "This email already exists!");
             return message;
@@ -94,8 +97,39 @@ public class UserServiceImpl implements UserService {
 
         userRepository.save(customer);
 
+        // create a shopping cart for customer
+        ShoppingCart cart = ShoppingCart.builder()
+                .user(customer)
+                .build();
+        cartRepository.save(cart);
+
         message.put("type", "success");
         message.put("detail", "Registered successfully 🎉");
+        return message;
+    }
+
+    @Override
+    public UserDto getUserByEmail(String email) {
+        User user = userRepository.findByEmail(email).get();
+        return mapToDto(user);
+    }
+
+    @Override
+    public Map<String, String> updatePassword(Long userId, PasswordDto passwordDto) {
+        User user = userRepository.findById(userId).get();
+        if (!passwordDto.getPassword().equals(passwordDto.getConfirmPassword())) {
+            message.put("type", "error");
+            message.put("detail", "The password is not matched 😑");
+            return message;
+        }
+        if (passwordEncoder.matches(passwordDto.getPassword(), user.getPassword())) {
+            message.put("type", "error");
+            message.put("detail", "This password is the same as the old one 😐 bruhh");
+            return message;
+        }
+
+        message.put("type", "success");
+        message.put("detail", "Updated password successfully 🎉");
         return message;
     }
 
@@ -114,18 +148,20 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public UserDto updateUser(Long id, UserDto userDto) {
+    public Map<String, String> updateUser(Long id, UserDto userDto) {
         User user = findUserById(id);
         user.setFirstName(userDto.getFirstName());
         user.setLastName(userDto.getLastName());
         user.setEmail(userDto.getEmail());
-        user.setPassword(userDto.getPassword());
         user.setAddress(userDto.getAddress());
         user.setPhoneNumber(userDto.getPhoneNumber());
         user.setImage(userDto.getImage());
 
         userRepository.save(user);
-        return mapToDto(user);
+
+        message.put("type", "success");
+        message.put("detail", "Updated profile successfully 🎊");
+        return message;
     }
 
     @Override
@@ -139,10 +175,6 @@ public class UserServiceImpl implements UserService {
         return userRepository
                 .findById(id).orElseThrow(()
                         -> new ResourceNotFoundException("User", "id", id));
-    }
-
-    private boolean checkEmailExist(RegisterDto registerDto) {
-        return userRepository.findByEmail(registerDto.getEmail()).isPresent();
     }
 
     private boolean checkMatchedPassword(RegisterDto registerDto) {

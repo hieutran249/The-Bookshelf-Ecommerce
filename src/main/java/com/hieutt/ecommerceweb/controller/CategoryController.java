@@ -2,6 +2,7 @@ package com.hieutt.ecommerceweb.controller;
 
 import com.hieutt.ecommerceweb.dto.CategoryDto;
 import com.hieutt.ecommerceweb.service.CategoryService;
+import com.hieutt.ecommerceweb.utils.Constants;
 import jakarta.validation.Valid;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -25,7 +26,7 @@ public class CategoryController {
     }
 
     @GetMapping
-    public String getAllCategories(Model model, @RequestParam(value = "pageNo") int pageNo) {
+    public String getAllCategories(Model model, @RequestParam(value = "pageNo", defaultValue = Constants.DEFAULT_PAGE_NUMBER, required = false) int pageNo) {
         model.addAttribute("title", "Manage Categories");
         List<CategoryDto> allCategories = categoryService.getAllCategories();
         List<CategoryDto> categories = categoryService.getAllCategories(pageNo);
