@@ -46,7 +46,6 @@ public class BookServiceImpl implements BookService {
         Book book = mapToEntity(bookDto);
         if (!image.isEmpty()) {
             imageUpload.upload(image);
-            System.out.println(Base64.getEncoder().encodeToString(image.getBytes()));
             book.setImage(Base64.getEncoder().encodeToString(image.getBytes()));
         }
         bookRepository.save(book);

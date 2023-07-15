@@ -13,7 +13,12 @@ import com.hieutt.ecommerceweb.service.UserService;
 import org.modelmapper.ModelMapper;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
+import java.security.Principal;
+import java.time.LocalDateTime;
+import java.util.Base64;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -95,12 +100,13 @@ public class UserServiceImpl implements UserService {
                 .role(Role.CUSTOMER)
                 .build();
 
-        userRepository.save(customer);
-
         // create a shopping cart for customer
         ShoppingCart cart = ShoppingCart.builder()
                 .user(customer)
                 .build();
+
+        customer.setShoppingCart(cart);
+        userRepository.save(customer);
         cartRepository.save(cart);
 
         message.put("type", "success");
@@ -116,17 +122,21 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public Map<String, String> updatePassword(Long userId, PasswordDto passwordDto) {
-        User user = userRepository.findById(userId).get();
-        if (!passwordDto.getPassword().equals(passwordDto.getConfirmPassword())) {
+        User user = findUserById(userId);
+        if (!passwordDto.getNewPassword().equals(passwordDto.getConfirmPassword())) {
             message.put("type", "error");
             message.put("detail", "The password is not matched 😑");
             return message;
         }
-        if (passwordEncoder.matches(passwordDto.getPassword(), user.getPassword())) {
+        if (!passwordEncoder.matches(passwordDto.getOldPassword(), user.getPassword())) {
             message.put("type", "error");
-            message.put("detail", "This password is the same as the old one 😐 bruhh");
+            message.put("detail", "This password is not your current password 😐 bruhh");
             return message;
         }
+
+        user.setPassword(passwordEncoder.encode(passwordDto.getNewPassword()));
+        user.setPasswordChangedAt(LocalDateTime.now());
+        userRepository.save(user);
 
         message.put("type", "success");
         message.put("detail", "Updated password successfully 🎉");
@@ -148,14 +158,27 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public Map<String, String> updateUser(Long id, UserDto userDto) {
+    public User getCurrentUser(Principal principal) {
+        String email = principal.getName();
+        return mapToEntity(getUserByEmail(email));
+    }
+
+    @Override
+    public Map<String, String> updateUser(Long id, UserDto userDto, MultipartFile image) throws IOException {
         User user = findUserById(id);
+        if (!userDto.getEmail().equals(user.getEmail()) && userRepository.existsByEmail(user.getEmail())) {
+            message.put("type", "error");
+            message.put("detail", "This email already exists 🤷‍♂️");
+            return message;
+        }
+        if (!image.isEmpty()) {
+            user.setImage(Base64.getEncoder().encodeToString(image.getBytes()));
+        }
         user.setFirstName(userDto.getFirstName());
         user.setLastName(userDto.getLastName());
         user.setEmail(userDto.getEmail());
         user.setAddress(userDto.getAddress());
         user.setPhoneNumber(userDto.getPhoneNumber());
-        user.setImage(userDto.getImage());
 
         userRepository.save(user);
 

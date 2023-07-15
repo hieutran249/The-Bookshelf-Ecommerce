@@ -36,7 +36,8 @@ public class ShoppingCart {
     @OneToMany(
             mappedBy = "shoppingCart",
             cascade = CascadeType.ALL,
-            fetch = FetchType.LAZY
+            fetch = FetchType.LAZY,
+            orphanRemoval = true
     )
     private List<CartItem> cartItemList = new ArrayList<>();
 }

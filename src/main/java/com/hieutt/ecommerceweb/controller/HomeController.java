@@ -63,6 +63,12 @@ public class HomeController {
         return "customer/index";
     }
 
+    @GetMapping("/contact-us")
+    public String contactUs(Model model) {
+        model.addAttribute("title", "Contact us");
+        return "customer/contact-us";
+    }
+
     @PreAuthorize("hasRole('ADMIN')")
     @GetMapping("/admin")
     public String admin(Model model) {

@@ -1,8 +1,10 @@
 package com.hieutt.ecommerceweb.controller;
 
-import com.hieutt.ecommerceweb.entity.CartItem;
+import com.hieutt.ecommerceweb.dto.UserDto;
 import com.hieutt.ecommerceweb.entity.ShoppingCart;
+import com.hieutt.ecommerceweb.entity.User;
 import com.hieutt.ecommerceweb.service.ShoppingCartService;
+import com.hieutt.ecommerceweb.service.UserService;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -15,7 +17,6 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.security.Principal;
-import java.util.List;
 import java.util.Map;
 
 @RequestMapping("/customer")
@@ -23,9 +24,11 @@ import java.util.Map;
 @Controller
 public class CartController {
     private final ShoppingCartService cartService;
+    private final UserService userService;
 
-    public CartController(ShoppingCartService cartService) {
+    public CartController(ShoppingCartService cartService, UserService userService) {
         this.cartService = cartService;
+        this.userService = userService;
     }
 
     @GetMapping("/my-cart")
@@ -62,5 +65,23 @@ public class CartController {
         ShoppingCart cart = cartService.getCartByUser(principal);
         session.setAttribute("cart", cart);
         return "redirect:/customer/my-cart";
+    }
+
+    @GetMapping("/checkout")
+    public String checkout(Principal principal, RedirectAttributes redirectAttributes, Model model) {
+        User user = userService.getCurrentUser(principal);
+        if (user.getAddress() == null || user.getPhoneNumber() == null) {
+            redirectAttributes.addFlashAttribute("type", "addInfo");
+            redirectAttributes.addFlashAttribute("detail", "Please add your address and phone number before checking out 🙏");
+            return "redirect:/customer/my-account";
+        }
+        ShoppingCart cart = cartService.getCartByUser(principal);
+        if (cart.getCartItemList().isEmpty()) {
+            redirectAttributes.addFlashAttribute("type", "emptyCart");
+            redirectAttributes.addFlashAttribute("detail", "You cannot checkout because your shopping cart is empty 🤦‍♂️");
+            return "redirect:/customer/my-cart";
+        }
+        model.addAttribute("title", "Check out");
+        return "customer/checkout";
     }
 }

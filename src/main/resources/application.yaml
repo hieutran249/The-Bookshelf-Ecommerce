@@ -26,3 +26,6 @@ spring:
 server:
   tomcat:
     max-swallow-size: -1
+  servlet:
+    session:
+      persistent: false

@@ -31,63 +31,53 @@
                     <div class="title-left">
                         <h3>Billing address</h3>
                     </div>
-                    <form class="needs-validation" novalidate>
+                    <div class="mb-3">
+                        <h4>Email *</h4>
+                        <div class="input-group">
+                            <h5 th:text="${user.getEmail()}"></h5>
+                        </div>
+                    </div>
+                    <div class="mb-3">
+                        <h4>Phone number *</h4>
+                        <h5 th:text="${user.getPhoneNumber()}"></h5>
+                    </div>
+                    <div class="mb-3">
+                        <h4>Address *</h4>
+                        <h5 th:text="${user.getAddress()}"></h5>
+                    </div>
 
-                        <div class="mb-3">
-                            <label for="email">Email *</label>
-                            <div class="input-group">
-                                <input type="email" class="form-control" id="email" placeholder="" required>
-                                <div class="invalid-feedback" style="width: 100%;"> Your username is required.</div>
-                            </div>
-                        </div>
-                        <div class="mb-3">
-                            <label for="phone">Phone Number *</label>
-                            <input type="phone" class="form-control" id="phone" placeholder="">
-                            <div class="invalid-feedback"> Please enter a valid phone number for shipping updates.</div>
-                        </div>
-                        <div class="mb-3">
-                            <label for="address">Address *</label>
-                            <input type="text" class="form-control" id="address" placeholder="" required>
-                            <div class="invalid-feedback"> Please enter your shipping address.</div>
-                        </div>
-
-                        <hr class="mb-4">
-                        <div class="custom-control custom-checkbox">
-                            <input type="checkbox" class="custom-control-input" id="save-info">
-                            <label class="custom-control-label" for="save-info">Save this information for next
-                                time</label>
-                        </div>
-                        <hr class="mb-4">
-                        <div class="title"><span>Payment Methods</span></div>
+                    <hr class="mb-4">
+                    <div class="title"><span>Payment Methods</span></div>
+                    <form id="order-form" th:action="@{/customer/place-order}" method="post">
                         <div class="d-block my-3">
                             <div class="custom-control custom-radio">
                                 <input id="credit" name="paymentMethod" type="radio" class="custom-control-input"
-                                       checked required>
+                                       required value="Bank card">
                                 <label class="custom-control-label" for="credit">Bank card</label>
                             </div>
                             <div class="custom-control custom-radio">
                                 <input id="debit" name="paymentMethod" type="radio" class="custom-control-input"
-                                       required>
+                                       required checked value="Cash">
                                 <label class="custom-control-label" for="debit">Cash</label>
                             </div>
                         </div>
                         <div class="row">
                             <div class="col-md-6 mb-3">
                                 <label for="cc-name">Name on card</label>
-                                <input type="text" class="form-control" id="cc-name" placeholder="" required> <small
+                                <input type="text" class="form-control" id="cc-name" placeholder=""> <small
                                     class="text-muted">Full name as displayed on card</small>
                                 <div class="invalid-feedback"> Name on card is required</div>
                             </div>
                             <div class="col-md-6 mb-3">
                                 <label for="cc-number">Card number</label>
-                                <input type="text" class="form-control" id="cc-number" placeholder="" required>
+                                <input type="text" class="form-control" id="cc-number" placeholder="">
                                 <div class="invalid-feedback"> Credit card number is required</div>
                             </div>
                         </div>
                         <div class="row">
                             <div class="col-md-6 mb-3">
                                 <label for="cc-expiration">CVV</label>
-                                <input type="text" class="form-control" id="cc-cvv" placeholder="" required>
+                                <input type="text" class="form-control" id="cc-cvv" placeholder="">
                                 <div class="invalid-feedback"> Security code required</div>
                             </div>
                         </div>
@@ -102,24 +92,16 @@
                             <h3>Shopping cart</h3>
                         </div>
                         <div class="rounded p-2 bg-light">
-                            <div class="media mb-2 border-bottom">
-                                <div class="media-body"><a href="product-detail.html"> Lobster rolls</a>
-                                    <div class="small text-muted">Price: $80.00 <span class="mx-2">|</span> Qty: 1 <span
-                                            class="mx-2">|</span> Subtotal: $80.00
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="media mb-2 border-bottom">
-                                <div class="media-body"><a href="product-detail.html"> Octopus with Black Bean Pear</a>
-                                    <div class="small text-muted">Price: $60.00 <span class="mx-2">|</span> Qty: 1 <span
-                                            class="mx-2">|</span> Subtotal: $60.00
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="media mb-2">
-                                <div class="media-body"><a href="product-detail.html"> Crab Toast</a>
-                                    <div class="small text-muted">Price: $40.00 <span class="mx-2">|</span> Qty: 1 <span
-                                            class="mx-2">|</span> Subtotal: $40.00
+                            <div class="media mb-2 border-bottom"
+                                 th:each="cartItem : ${session.cart.getCartItemList()}">
+                                <div class="media-body"><a th:href="@{/shop/detail/{id}(id = ${cartItem.book.id})}"
+                                                           th:text="${cartItem.book.getTitle()}">s</a>
+                                    <div class="small text-muted" th:text="${'Price: đ ' + cartItem.book.getPrice()}">
+                                        <span class="mx-2">|</span>
+                                        <span class="mx-2" th:text="${'Qty: ' + cartItem.getQuantity()}"></span>
+                                        <span class="mx-2">|</span>
+                                        <span class="mx-2"
+                                              th:text="${'Subtotal: đ ' + cartItem.getTotalPrice()}"></span>
                                     </div>
                                 </div>
                             </div>
@@ -138,34 +120,28 @@
                         <hr class="my-1">
                         <div class="d-flex">
                             <h4>Sub Total</h4>
-                            <div class="ml-auto font-weight-bold"> $180</div>
+                            <div class="ml-auto font-weight-bold" th:text="'đ ' + ${session.cart.totalPrice}"></div>
                         </div>
-                        <div class="d-flex">
-                            <h4>Discount</h4>
-                            <div class="ml-auto font-weight-bold"> $0</div>
-                        </div>
-                        <hr class="my-1">
-                        <div class="d-flex">
-                            <h4>Coupon Discount</h4>
-                            <div class="ml-auto font-weight-bold"> $9</div>
-                        </div>
-                        <div class="d-flex">
-                            <h4>Tax</h4>
-                            <div class="ml-auto font-weight-bold"> $2</div>
-                        </div>
+                        <hr>
                         <div class="d-flex">
                             <h4>Shipping Cost</h4>
-                            <div class="ml-auto font-weight-bold"> Free</div>
+                            <div class="ml-auto font-weight-bold" th:text="${session.cart.totalPrice >= 1000000} ? 'Free'
+                        : 'đ 30000'"></div>
                         </div>
                         <hr>
                         <div class="d-flex gr-total">
                             <h5>Grand Total</h5>
-                            <div class="ml-auto h5"> $173</div>
+                            <div class="ml-auto h5" th:if="${session.cart.totalPrice >= 1000000}"
+                                 th:text="đ + ${session.cart.totalPrice}"></div>
+                            <div class="ml-auto h5" th:if="${session.cart.totalPrice < 1000000}"
+                                 th:text="'đ ' + ${session.cart.totalPrice + 30000}"></div>
                         </div>
                         <hr>
                     </div>
                 </div>
-                <div class="col-12 d-flex shopping-box"><a href="#" class="ml-auto btn hvr-hover">Place Order</a></div>
+                <div class="col-12 d-flex shopping-box">
+                    <button type="submit" form="order-form" class="ml-auto btn hvr-hover">Place Order</button>
+                </div>
             </div>
         </div>
     </div>

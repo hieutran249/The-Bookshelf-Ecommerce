@@ -24,27 +24,159 @@
 
 <!-- Start My Account  -->
 <div class="container">
-    <div class="row my-2" th:with="user=${#authentication.getPrincipal()}">
-        <div class="col-lg-4 order-lg-1 text-center">
-            <!-- if user has an avatar -->
-            <img th:if="${user.getImage() != null}"
-                 th:src="'data:image/jpeg;base64,' + ${user.getImage()}" width="200px" height="200px"
-                 class="mx-auto img-fluid img-circle d-block" alt="Profile picture">
-            <!-- if user has no avatar -->
-            <img th:if="${user.getImage() == null}" th:src="@{/img/profile.jpg}" width="200px" height="200px"
-                 class="mx-auto img-fluid img-circle d-block" alt="Profile picture">
-        </div>
-        <div class="col-lg-8 order-lg-2">
-            <div class="tab-content py-4">
-                <div class="tab-pane active" id="profile">
-                    <h1><b>Your Profile</b></h1>
-                    <h2 th:text="${user.getFirstName()} + ' ' + ${user.getLastName()}"></h2>
-                    <h4 th:text="'Email: ' + ${user.getEmail()}"></h4>
-                    <h4 th:text="'Phone: ' + ${user.getPhoneNumber()}"></h4>
-                    <h4 th:text="'Address: ' + ${user.getAddress()}"></h4>
+    <div th:if="${type == 'success'}" class="alert alert-success text-center">
+        <p th:text="${detail}" class="text-center"></p>
+    </div>
+    <div th:if="${type == 'error'}" class="alert alert-danger text-center">
+        <p th:text="${detail}" class="text-center"></p>
+    </div>
+    <div th:if="${type == 'addInfo'}" class="alert alert-danger text-center">
+        <p th:text="${detail}" class="text-center"></p>
+    </div>
+    <div class="row my-2">
+        <!--        <div class="col-lg-4 order-lg-1 text-center">-->
+        <!--            &lt;!&ndash; if user has an avatar &ndash;&gt;-->
+        <!--            <img th:if="${user.getImage() != null}"-->
+        <!--                 th:src="'data:image/jpeg;base64,' + ${user.getImage()}" width="200px" height="200px"-->
+        <!--                 class="mx-auto img-fluid img-circle d-block" alt="Profile picture">-->
+        <!--            &lt;!&ndash; if user has no avatar &ndash;&gt;-->
+        <!--            <img th:if="${user.getImage() == null}" th:src="@{/img/profile.jpg}" width="200px" height="200px"-->
+        <!--                 class="mx-auto img-fluid img-circle d-block" alt="Profile picture">-->
+        <!--        </div>-->
+        <!--        <div class="col-lg-8 order-lg-2">-->
+        <!--            <div class="tab-content py-4">-->
+        <!--                <div class="tab-pane active" id="profile">-->
+        <!--                    <h1><b>Your Profile</b></h1>-->
+        <!--                    <h2 th:text="${user.getFirstName()} + ' ' + ${user.getLastName()}"></h2>-->
+        <!--                    <h4 th:text="'Email: ' + ${user.getEmail()}"></h4>-->
+        <!--                    <h4 th:text="'Phone: ' + ${user.getPhoneNumber()}"></h4>-->
+        <!--                    <h4 th:text="'Address: ' + ${user.getAddress()}"></h4>-->
+        <!--                </div>-->
+        <!--            </div>-->
+        <!--        </div>-->
+
+        <!-- User Info form -->
+        <form class="form container-lg col" th:action="@{/customer/update-info}" method="post" th:object="${user}"
+              enctype="multipart/form-data">
+            <input type="hidden" class="form-control" id="id" name="id" th:field="*{id}">
+            <div class="form-row">
+                <div class="form-group mb-2 col-md-5">
+                    <label for="firstName" class="col-form-label">Firstname</label>
+                    <input type="text"
+                           class="form-control"
+                           id="firstName"
+                           name="firstName"
+                           th:field="*{firstName}"
+                           placeholder="Firstname"
+                    >
+                    <p class="text-danger" th:if="${#fields.hasErrors('firstName')}" th:errors="*{firstName}">
+                </div>
+                <div class="form-group mb-2 col">
+                    <label for="lastName" class="col-form-label">Lastname</label>
+                    <input type="text"
+                           class="form-control"
+                           id="lastName"
+                           name="lastName"
+                           th:field="*{lastName}"
+                           placeholder="Lastname"
+                    >
+                    <p class="text-danger" th:if="${#fields.hasErrors('lastName')}" th:errors="*{lastName}">
                 </div>
             </div>
-        </div>
+
+            <div class="form-group mb-2">
+                <label for="email" class="col-form-label">Email</label>
+                <input type="email"
+                       class="form-control"
+                       id="email"
+                       name="email"
+                       th:field="*{email}"
+                       placeholder="Email"
+                >
+                <p class="text-danger" th:if="${#fields.hasErrors('email')}" th:errors="*{email}">
+            </div>
+            <div class="form-group mb-2">
+                <label for="address" class="col-form-label">Address</label>
+                <input type="text"
+                       class="form-control"
+                       id="address"
+                       name="address"
+                       th:field="*{address}"
+                       placeholder="Address"
+                >
+            </div>
+            <div class="form-group mb-2">
+                <label for="phoneNumber" class="col-form-label">Phone Number</label>
+                <input type="text"
+                       class="form-control"
+                       id="phoneNumber"
+                       name="phoneNumber"
+                       th:field="*{phoneNumber}"
+                       placeholder="Phone Number"
+                >
+            </div>
+            <div class="form-row">
+                <div class="form-group mb-2 col-7">
+                    <!-- if user has avatar -->
+                    <img th:if="${user.getImage() != null}"
+                         th:src="'data:image/jpeg;base64,' + ${user.getImage()}" width="200px" height="200px"
+                         alt="user-image" style="border-radius: 50%">
+                    <!-- if user has no avatar -->
+                    <img th:if="${user.getImage() == null}" th:src="@{/img/undraw_profile.svg}" width="200px" height="200px"
+                         alt="user-image">
+                </div>
+                <div class="form-group mb-2 col">
+                    <label for="user-image" class="col-form-label">Avatar</label>
+                    <input type="file"
+                           class="form-control-file"
+                           id="user-image"
+                           name="user-image"
+                    >
+                </div>
+            </div>
+
+            <button type="submit" class="btn btn-primary mb-2 float-right">Save</button>
+        </form>
+
+        <!-- Password form -->
+        <form class="form container-lg col" th:action="@{/customer/update-password}" method="post" th:object="${password}">
+            <input type="hidden" th:value="${user.id}" name="id" class="form-control">
+            <div class="form-group mb-2">
+                <label for="oldPassword" class="col-form-label">Current Password</label>
+                <input type="text"
+                       class="form-control"
+                       id="oldPassword"
+                       name="oldPassword"
+                       th:field="*{oldPassword}"
+                       placeholder="Current Password"
+                >
+                <p class="text-danger" th:if="${#fields.hasErrors('oldPassword')}" th:errors="*{oldPassword}">
+            </div>
+            <div class="form-group mb-2">
+                <label for="newPassword" class="col-form-label">New Password</label>
+                <input type="text"
+                       class="form-control"
+                       id="newPassword"
+                       name="newPassword"
+                       th:field="*{newPassword}"
+                       placeholder="New Password"
+                >
+                <p class="text-danger" th:if="${#fields.hasErrors('newPassword')}" th:errors="*{newPassword}">
+            </div>
+            <div class="form-group mb-2">
+                <label for="confirmPassword" class="col-form-label">Confirm Password</label>
+                <input type="text"
+                       class="form-control"
+                       id="confirmPassword"
+                       name="confirmPassword"
+                       th:field="*{confirmPassword}"
+                       placeholder="Confirm Password"
+                >
+                <p class="text-danger" th:if="${#fields.hasErrors('confirmPassword')}" th:errors="*{confirmPassword}">
+            </div>
+
+            <button type="submit" class="btn btn-primary mb-2 float-right">Change password</button>
+        </form>
     </div>
 </div>
 <div class="my-account-box-main">

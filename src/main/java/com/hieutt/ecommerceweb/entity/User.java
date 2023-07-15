@@ -37,6 +37,12 @@ public class User implements UserDetails {
     private LocalDateTime passwordChangedAt;
     private String address;
     private String phoneNumber;
+
+    @Lob
+    @Column(
+            name = "image",
+            columnDefinition = "MEDIUMBLOB"
+    )
     private String image;
 
     @Enumerated(EnumType.STRING)
@@ -44,13 +50,15 @@ public class User implements UserDetails {
 
     @OneToOne(
             mappedBy = "user",
-            cascade = CascadeType.ALL
+            cascade = CascadeType.ALL,
+            fetch = FetchType.LAZY
     )
     private ShoppingCart shoppingCart;
 
     @OneToMany(
             mappedBy = "user",
-            cascade = CascadeType.ALL
+            cascade = CascadeType.ALL,
+            orphanRemoval = true
     )
     private List<Order> orders = new ArrayList<>();
 

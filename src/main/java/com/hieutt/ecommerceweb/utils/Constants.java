@@ -17,7 +17,8 @@ public class Constants {
             "/home",
             "/index",
             "/menu",
-            "/shop/**"
+            "/shop/**",
+            "/contact-us"
     };
     public static final String DEFAULT_PAGE_NUMBER = "0";
     public static final String DEFAULT_SORT_BY = "id";

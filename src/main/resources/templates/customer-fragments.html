@@ -57,10 +57,10 @@
                         <!-- if user has an avatar -->
                         <img th:if="${#authentication.getPrincipal().getImage != null}"
                              th:src="'data:image/jpeg;base64,' + ${#authentication.getPrincipal().getImage}"
-                             style="height: 20px; width: 50px; border-radius: 50%" alt="Image">
+                             style="height: 20px; width: 20px; border-radius: 50%" alt="Image">
                         <!-- if user has no avatar -->
                         <img th:if="${#authentication.getPrincipal().getImage == null}" th:src="@{/img/undraw_profile.svg}"
-                             style="height: 20px; width: 30px; border-radius: 50%" alt="Image">
+                             style="height: 20px; width: 20px; border-radius: 50%" alt="Image">
                         <span th:text="${#authentication.getPrincipal().getFirstName()} + ' '
                         + ${#authentication.getPrincipal().getLastName()}"></span>
                         <i class="fas fa-sort-down"></i>
@@ -69,6 +69,7 @@
                         <li><a th:href="@{/shop}">Shop Detail</a></li>
                         <li><a th:href="@{/customer/my-cart}">Cart</a></li>
                         <li><a th:href="@{/customer/checkout}">Checkout</a></li>
+                        <li><a th:href="@{/customer/orders}">Orders</a></li>
                         <li><a th:href="@{/customer/my-account}">My Account</a></li>
                         <li><a th:href="@{/logout}">Logout</a></li>
                     </ul>
@@ -130,7 +131,7 @@
                     <li class="nav-item"><a class="nav-link" th:href="@{/home}">Home</a></li>
                     <li class="nav-item active"><a class="nav-link" th:href="@{/menu}">Menu</a></li>
                     <li class="nav-item"><a class="nav-link" th:href="@{/shop}">Shop</a></li>
-                    <li class="nav-item"><a class="nav-link" th:href="@{/customer/contact-us}">Contact Us</a></li>
+                    <li class="nav-item"><a class="nav-link" th:href="@{/contact-us}">Contact Us</a></li>
                 </ul>
             </div>
             <!-- /.navbar-collapse -->
@@ -165,8 +166,8 @@
                         <span th:text="'đ ' + ${cartItem.totalPrice}"></span>
                     </li>
                 </ul>
-                <span th:if="${cart.cartItemList == null}">You haven't added any book into your shopping cart 🛒</span>
             </li>
+            <span th:if="${session.cart.cartItemList == null}">You haven't added any book into your shopping cart 🛒</span>
             <a th:href="@{/customer/my-cart}" class="btn btn-info">Check Cart</a>
         </div>
         <!-- End Side Cart -->

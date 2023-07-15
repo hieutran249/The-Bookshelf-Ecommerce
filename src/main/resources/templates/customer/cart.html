@@ -25,6 +25,9 @@
 <!-- Start Cart  -->
 <div class="cart-box-main">
     <div class="container">
+        <div th:if="${type == 'emptyCart'}" class="alert alert-danger text-center">
+            <p th:text="${detail}" class="text-center"></p>
+        </div>
         <div class="row">
             <div class="col-lg-12">
                 <div class="table-main table-responsive">
@@ -120,7 +123,7 @@
                     <hr>
                 </div>
             </div>
-            <div class="col-12 d-flex shopping-box"><a href="checkout.html" class="ml-auto btn hvr-hover">Checkout</a>
+            <div class="col-12 d-flex shopping-box"><a th:href="@{/customer/checkout}" class="ml-auto btn hvr-hover">Checkout</a>
             </div>
         </div>
 
