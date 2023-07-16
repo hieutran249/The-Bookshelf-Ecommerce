@@ -3,7 +3,6 @@ package com.hieutt.ecommerceweb.service;
 import com.hieutt.ecommerceweb.dto.OrderDto;
 import com.hieutt.ecommerceweb.entity.User;
 
-import java.security.Principal;
 import java.util.List;
 
 public interface OrderService {
@@ -14,4 +13,7 @@ public interface OrderService {
     void deleteOrder(Long id);
     List<OrderDto> getOrdersByUser(User user);
     void cancelOrder(Long orderId);
+    void acceptOrder(Long orderId);
+    void rejectOrder(Long orderId);
+    void doNextStage(Long orderId, String status);
 }

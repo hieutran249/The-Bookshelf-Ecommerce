@@ -3,12 +3,14 @@ package com.hieutt.ecommerceweb.controller;
 import com.hieutt.ecommerceweb.dto.RegisterDto;
 import com.hieutt.ecommerceweb.service.UserService;
 import jakarta.validation.Valid;
+import org.springframework.http.HttpRequest;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 
 import java.util.Map;
 
@@ -32,12 +34,6 @@ public class AuthController {
         model.addAttribute("title", "Admin Register");
         model.addAttribute("register", new RegisterDto());
         return "admin/register";
-    }
-
-    @GetMapping("/forgot-password-admin")
-    public String adminForgotPasswordForm(Model model) {
-        model.addAttribute("title", "Admin Forgot Password");
-        return "admin/forgot-password";
     }
 
     @GetMapping("/login")
@@ -84,5 +80,17 @@ public class AuthController {
         model.addAttribute("type", message.get("type"));
         model.addAttribute("detail", message.get("detail"));
         return "customer/register";
+    }
+
+    @GetMapping("/forgot-password")
+    public String adminForgotPasswordForm(Model model) {
+        model.addAttribute("title", "Forgot Password");
+        return "forgot-password";
+    }
+
+    @PostMapping("/reset-password")
+    public String resetPassword(@RequestParam(value = "email") String email,
+                                HttpRequest request) {
+        return null;
     }
 }

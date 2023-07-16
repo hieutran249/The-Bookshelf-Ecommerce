@@ -11,7 +11,6 @@ import com.hieutt.ecommerceweb.service.OrderService;
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
 
-import java.security.Principal;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -45,6 +44,9 @@ public class OrderServiceImpl implements OrderService {
                 .quantity(cart.getQuantity())
                 .user(user)
                 .build();
+        if (paymentMethod.equals("Bank card")) {
+            order.setPaidAt(LocalDateTime.now());
+        }
         orderRepository.save(order);
 
         List<CartItem> cartItems = cart.getCartItemList();
@@ -117,6 +119,41 @@ public class OrderServiceImpl implements OrderService {
         Order order = findOrderById(orderId);
         order.setOrderStatus(OrderStatus.CANCELED);
         order.setUpdatedAt(LocalDateTime.now());
+        orderRepository.save(order);
+    }
+
+    @Override
+    public void acceptOrder(Long orderId) {
+        Order order = findOrderById(orderId);
+        order.setAccepted(true);
+        order.setOrderStatus(OrderStatus.PACKAGING);
+        order.setUpdatedAt(LocalDateTime.now());
+        orderRepository.save(order);
+    }
+
+    @Override
+    public void rejectOrder(Long orderId) {
+        Order order = findOrderById(orderId);
+        order.setOrderStatus(OrderStatus.REJECTED);
+        order.setUpdatedAt(LocalDateTime.now());
+        orderRepository.save(order);
+    }
+
+    @Override
+    public void doNextStage(Long orderId, String status) {
+        Order order = findOrderById(orderId);
+        if (status.equals("delivering")) {
+            order.setOrderStatus(OrderStatus.DELIVERING);
+            order.setUpdatedAt(LocalDateTime.now());
+        }
+        if (status.equals("delivered")) {
+            order.setOrderStatus(OrderStatus.DELIVERED);
+            order.setDeliveredAt(LocalDateTime.now());
+            if (order.getPaymentMethod().equals("Cash")) {
+                order.setPaidAt(LocalDateTime.now());
+            }
+            order.setUpdatedAt(LocalDateTime.now());
+        }
         orderRepository.save(order);
     }
 

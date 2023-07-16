@@ -29,3 +29,7 @@ server:
   servlet:
     session:
       persistent: false
+  error:
+    whitelabel:
+      enabled: false
+    path: /error

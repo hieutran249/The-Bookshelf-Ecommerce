@@ -1,5 +1,7 @@
 package com.hieutt.ecommerceweb.controller;
 
+import com.hieutt.ecommerceweb.dto.OrderDto;
+import com.hieutt.ecommerceweb.entity.OrderStatus;
 import com.hieutt.ecommerceweb.entity.ShoppingCart;
 import com.hieutt.ecommerceweb.entity.User;
 import com.hieutt.ecommerceweb.service.OrderService;
@@ -15,6 +17,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.security.Principal;
+import java.util.List;
 
 @Controller
 public class OrderController {
@@ -28,6 +31,8 @@ public class OrderController {
         this.cartService = cartService;
     }
 
+
+    // CUSTOMER
     @GetMapping("/customer/orders")
     public String getOrdersByUser(Model model, Principal principal) {
         User user = userService.getCurrentUser(principal);
@@ -35,6 +40,7 @@ public class OrderController {
         model.addAttribute("title", "My orders");
         return "customer/orders";
     }
+
     @PostMapping("/customer/place-order")
     public String placeOrder(@RequestParam(value = "paymentMethod") String paymentMethod,
                              Principal principal,
@@ -61,8 +67,57 @@ public class OrderController {
         return "redirect:/customer/orders";
     }
 
+
+    // ADMIN
     @GetMapping("/admin/orders")
-    public String getAllOrders() {
+    public String getAllOrders(Model model) {
+        List<OrderDto> orders = orderService.getAllOrders();
+        model.addAttribute("orders", orders);
+        model.addAttribute("size", orders.size());
+        model.addAttribute("title", "Manage Orders");
         return "admin/orders";
+    }
+
+    @GetMapping("/admin/orders/accept/{id}")
+    public String acceptOrder(@PathVariable("id") Long orderId,
+                              RedirectAttributes redirectAttributes) {
+        orderService.acceptOrder(orderId);
+        redirectAttributes.addFlashAttribute("accepted", "You have accepted the order 👍");
+        return "redirect:/admin/orders";
+    }
+
+    @GetMapping("/admin/orders/reject/{id}")
+    public String rejectOrder(@PathVariable("id") Long orderId,
+                              RedirectAttributes redirectAttributes) {
+        orderService.rejectOrder(orderId);
+        redirectAttributes.addFlashAttribute("accepted", "You have rejected the order 👎");
+        return "redirect:/admin/orders";
+    }
+
+    @GetMapping("/admin/orders/detail/{id}")
+    public String getOrderDetail(@PathVariable("id") Long orderId,
+                                 Model model) {
+        OrderDto order = orderService.getOrderById(orderId);
+        switch (order.getOrderStatus()) {
+            case QUEUED -> model.addAttribute("status", "The order hasn't been accepted ❌");
+            case PACKAGING -> model.addAttribute("status", "The books are being packaged 📦");
+            case DELIVERING -> model.addAttribute("status", "The books are being delivered 🚚");
+            case DELIVERED -> model.addAttribute("status", "The books has been delivered 👌");
+            case RETURNED -> model.addAttribute("status", "The books has been returned 😢");
+            case CLOSED -> model.addAttribute("status", "The order has been closed 🔒");
+            case REJECTED -> model.addAttribute("status", "The order has been rejected 🚫");
+            case CANCELED -> model.addAttribute("status", "The order has been canceled 🤬");
+        }
+        model.addAttribute("order", order);
+        model.addAttribute("title", "Order Details");
+        return "admin/order-detail";
+    }
+
+    @GetMapping("/admin/orders/nextStage/{id}")
+    public String doNextStage(@RequestParam(value = "status") String status,
+                              @PathVariable(value = "id") Long orderId) {
+        orderService.doNextStage(orderId, status);
+
+        return "redirect:/admin/orders/detail/" + orderId;
     }
 }

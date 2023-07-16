@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="https://www.thymeleaf.org"
+      xmlns:sec="https://www.thymeleaf.org/thymeleaf-extras-springsecurity6">
+
+<head th:replace="~{admin-fragments :: header}">
+</head>
+
+<body id="page-top">
+
+<!-- Page Wrapper -->
+<div id="wrapper">
+
+    <!-- Sidebar -->
+    <ul th:replace="~{admin-fragments :: sidebar}"></ul>
+    <!-- End of Sidebar -->
+
+    <!-- Content Wrapper -->
+    <div id="content-wrapper" class="d-flex flex-column">
+
+        <!-- Main Content -->
+        <div id="content">
+            <!-- Topbar -->
+            <nav th:replace="~{admin-fragments :: topbar}"></nav>
+            <!-- End of Topbar -->
+
+            <!-- Begin Page Content -->
+            <div class="container-fluid">
+<!--                <div th:if="${type == 'success'}" class="alert alert-success text-center">-->
+<!--                    <p th:text="${detail}" class="text-center"></p>-->
+<!--                </div>-->
+                <div class="card shadow mb-4">
+                    <div class="card-header py-3">
+                        <h6 class="m-0 font-weight-bold text-primary">Order Details</h6>
+                    </div>
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="col-lg">
+                                <div class="border-bottom-primary mb-3">
+                                    <h3>Customer details</h3>
+                                </div>
+                                <div class="mb-3">
+                                    <h4>Email</h4>
+                                    <div class="input-group">
+                                        <h5 th:text="${order.user.getEmail()}"></h5>
+                                    </div>
+                                </div>
+                                <div class="mb-3">
+                                    <h4>Phone number</h4>
+                                    <h5 th:text="${order.user.getPhoneNumber()}"></h5>
+                                </div>
+                                <div class="mb-3">
+                                    <h4>Address</h4>
+                                    <h5 th:text="${order.user.getAddress()}"></h5>
+                                </div>
+                                <hr>
+                                <div class="mb-3">
+                                    <h4>Payment method</h4>
+                                    <h5 th:text="${order.getPaymentMethod()}"></h5>
+                                </div>
+                            </div>
+                            <div class="col-lg">
+                                <div class="border-bottom-primary mb-3">
+                                    <h3>Bill details</h3>
+                                </div>
+                                <div class="rounded p-2 bg-light">
+                                    <div class="media mb-2 border-bottom"
+                                         th:each="orderItem : ${order.getOrderItems()}">
+                                        <div class="media-body">
+                                            <p th:text="${orderItem.book.getTitle()}"></p>
+                                            <div class="small text-muted">
+                                                <span class="mx-2" th:text="${'Price: đ ' + orderItem.book.getPrice()}"></span>
+                                                <span class="mx-2">|</span>
+                                                <span class="mx-2" th:text="${'Qty: ' + orderItem.getQuantity()}"></span>
+                                                <span class="mx-2">|</span>
+                                                <span class="mx-2"
+                                                      th:text="${'Subtotal: đ ' + orderItem.getTotalPrice()}"></span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <hr>
+                                <div class="mb-3">
+                                    <h4>Grand total</h4>
+                                    <h5 th:text="${order.getTotalPrice()}"></h5>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row mt-lg-5">
+                            <div class="col">
+                                <div class="border-bottom-primary mb-3 text-center">
+                                    <h3>Process details</h3>
+                                </div>
+                                <div th:switch="${order.orderStatus.name()}" class="text-center">
+                                    <div class="mb-3" th:case="'QUEUED'">
+                                        <h4 th:text="${status}"></h4>
+                                        <a class="btn btn-primary"
+                                           th:href="@{/admin/orders/accept/{id}(id = ${order.id})}">Accept order</a>
+                                    </div>
+                                    <div class="mb-3" th:case="'PACKAGING'">
+                                        <h4 th:text="${status}"></h4>
+                                        <a class="btn btn-primary"
+                                           th:href="@{/admin/orders/nextStage/{id}(id = ${order.id}, status='delivering')}">Start delivering</a>
+                                    </div>
+                                    <div class="mb-3" th:case="'DELIVERING'">
+                                        <h4 th:text="${status}"></h4>
+                                        <a class="btn btn-primary"
+                                           th:href="@{/admin/orders/nextStage/{id}(id = ${order.id}, status='delivered')}">Delivered</a>
+                                    </div>
+                                    <div class="mb-3" th:case="'DELIVERED'">
+                                        <h4 th:text="${status}"></h4>
+                                    </div>
+                                    <div class="mb-3" th:case="'RETURNED'">
+                                        <h4 th:text="${status}"></h4>
+                                    </div>
+                                    <div class="mb-3" th:case="'CLOSED'">
+                                        <h4 th:text="${status}"></h4>
+                                    </div>
+                                    <div class="mb-3" th:case="'REJECTED'">
+                                        <h4 th:text="${status}"></h4>
+                                    </div>
+                                    <div class="mb-3" th:case="'CANCELED'">
+                                        <h4 th:text="${status}"></h4>
+                                    </div>
+                                </div>
+                            </div>
+
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+
+            <!-- End of Page Content -->
+
+        </div>
+        <!-- End of Main Content -->
+
+        <!-- Footer -->
+        <footer th:replace="~{admin-fragments :: footer}"></footer>
+        <!-- End of Footer -->
+
+    </div>
+    <!-- End of Content Wrapper -->
+
+</div>
+<!-- End of Page Wrapper -->
+
+<!-- Scroll to Top Button-->
+<a th:replace="~{admin-fragments :: scroll_to_top}"></a>
+
+<!-- Logout Modal-->
+<div th:replace="~{admin-fragments :: logout_modal}"></div>
+
+<!-- Scripts -->
+<th:block th:replace="~{admin-fragments :: script}"></th:block>
+
+</body>
+
+</html>

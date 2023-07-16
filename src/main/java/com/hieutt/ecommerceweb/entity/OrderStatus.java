@@ -3,9 +3,8 @@ package com.hieutt.ecommerceweb.entity;
 public enum OrderStatus {
     QUEUED,
     PACKAGING,
-    READY,
+    DELIVERING,
     DELIVERED,
-    PAID,
     RETURNED,
     CLOSED,
     REJECTED,

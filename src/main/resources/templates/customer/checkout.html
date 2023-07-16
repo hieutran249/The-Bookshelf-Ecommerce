@@ -96,7 +96,8 @@
                                  th:each="cartItem : ${session.cart.getCartItemList()}">
                                 <div class="media-body"><a th:href="@{/shop/detail/{id}(id = ${cartItem.book.id})}"
                                                            th:text="${cartItem.book.getTitle()}">s</a>
-                                    <div class="small text-muted" th:text="${'Price: đ ' + cartItem.book.getPrice()}">
+                                    <div class="small text-muted">
+                                        <span class="mx-2" th:text="${'Price: đ ' + cartItem.book.getPrice()}"></span>
                                         <span class="mx-2">|</span>
                                         <span class="mx-2" th:text="${'Qty: ' + cartItem.getQuantity()}"></span>
                                         <span class="mx-2">|</span>

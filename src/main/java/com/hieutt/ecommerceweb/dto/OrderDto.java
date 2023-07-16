@@ -1,5 +1,6 @@
 package com.hieutt.ecommerceweb.dto;
 
+import com.hieutt.ecommerceweb.entity.OrderItem;
 import com.hieutt.ecommerceweb.entity.User;
 import com.hieutt.ecommerceweb.entity.OrderStatus;
 import lombok.AllArgsConstructor;
@@ -8,6 +9,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Data
 @AllArgsConstructor
@@ -24,5 +26,6 @@ public class OrderDto {
     private String paymentMethod;
     private boolean accepted;
     private int quantity;
-    private User customer;
+    private User user;
+    private List<OrderItem> orderItems;
 }
