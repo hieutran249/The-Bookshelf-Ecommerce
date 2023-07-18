@@ -16,4 +16,5 @@ public interface OrderService {
     void acceptOrder(Long orderId);
     void rejectOrder(Long orderId);
     void doNextStage(Long orderId, String status);
+    void returnOrder(Long orderId);
 }

@@ -1,16 +1,18 @@
 package com.hieutt.ecommerceweb.controller;
 
+import com.hieutt.ecommerceweb.dto.ChangePasswordDto;
 import com.hieutt.ecommerceweb.dto.RegisterDto;
+import com.hieutt.ecommerceweb.dto.ResetPasswordDto;
+import com.hieutt.ecommerceweb.dto.UserDto;
+import com.hieutt.ecommerceweb.entity.User;
+import com.hieutt.ecommerceweb.service.EmailSenderService;
 import com.hieutt.ecommerceweb.service.UserService;
 import jakarta.validation.Valid;
-import org.springframework.http.HttpRequest;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.util.Map;
 
@@ -88,9 +90,37 @@ public class AuthController {
         return "forgot-password";
     }
 
-    @PostMapping("/reset-password")
-    public String resetPassword(@RequestParam(value = "email") String email,
-                                HttpRequest request) {
-        return null;
+    @GetMapping("/request-reset-password")
+    public String requestResetPassword(@RequestParam(value = "email") String email,
+                                RedirectAttributes redirectAttributes) {
+        Map<String, String> message = userService.requestResetPassword(email);
+        redirectAttributes.addFlashAttribute("type", message.get("type"));
+        redirectAttributes.addFlashAttribute("detail", message.get("detail"));
+        return "redirect:/forgot-password";
+    }
+
+    @GetMapping("/reset-password-form/{id}")
+    public String resetPasswordForm(@PathVariable(value = "id") Long userId,
+                                    Model model) {
+        model.addAttribute("userId", userId);
+        model.addAttribute("resetPassword", new ResetPasswordDto());
+        return "forgot-password-form";
+    }
+
+    @PostMapping("/reset-password/{id}")
+    public String resetPassword(@PathVariable(value = "id") Long userId,
+                                @Valid @ModelAttribute(value = "resetPassword") ResetPasswordDto resetPasswordDto,
+                                BindingResult result,
+                                RedirectAttributes redirectAttributes,
+                                Model model) {
+        if (result.hasErrors()) {
+            model.addAttribute("userId", userId);
+            model.addAttribute("resetPassword", new ResetPasswordDto());
+            return "forgot-password-form";
+        }
+        Map<String, String> message = userService.resetPassword(userId, resetPasswordDto);
+        redirectAttributes.addFlashAttribute("type", message.get("type"));
+        redirectAttributes.addFlashAttribute("detail", message.get("detail"));
+        return "redirect:/reset-password-form/" + userId;
     }
 }

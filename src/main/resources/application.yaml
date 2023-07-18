@@ -23,6 +23,19 @@ spring:
       enabled: true
       max-file-size: 2MB
       max-request-size: 2MB
+  mail:
+    host: smtp.gmail.com
+    port: 587
+    username: hieutt.tnvn@gmail.com
+    password: buutjomnfnffcmgz
+    properties:
+      mail:
+        smtp:
+          auth: true
+          starttls:
+            enable: true
+    protocol: smtp
+
 server:
   tomcat:
     max-swallow-size: -1

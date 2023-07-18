@@ -1,7 +1,8 @@
 package com.hieutt.ecommerceweb.service;
 
-import com.hieutt.ecommerceweb.dto.PasswordDto;
+import com.hieutt.ecommerceweb.dto.ChangePasswordDto;
 import com.hieutt.ecommerceweb.dto.RegisterDto;
+import com.hieutt.ecommerceweb.dto.ResetPasswordDto;
 import com.hieutt.ecommerceweb.dto.UserDto;
 import com.hieutt.ecommerceweb.entity.User;
 import org.springframework.web.multipart.MultipartFile;
@@ -21,5 +22,7 @@ public interface UserService {
     Map<String, String> createAdmin(RegisterDto registerDto);
     Map<String, String> createCustomer(RegisterDto registerDto);
     UserDto getUserByEmail(String email);
-    Map<String, String> updatePassword(Long userId, PasswordDto passwordDto);
+    Map<String, String> updatePassword(Long userId, ChangePasswordDto passwordDto);
+    Map<String, String> resetPassword(Long userId, ResetPasswordDto resetPasswordDto);
+    Map<String, String> requestResetPassword(String email);
 }

@@ -11,7 +11,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-public class PasswordDto {
+public class ChangePasswordDto {
     @NotEmpty(message = "Please provide your current password 🤓")
     private String oldPassword;
 

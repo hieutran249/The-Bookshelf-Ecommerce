@@ -33,16 +33,19 @@
                 <div th:if="${canceled}" class="text-center alert-success alert">
                     <p th:text="${canceled}"></p>
                 </div>
+                <div th:if="${returned}" class="text-center alert-success alert">
+                    <p th:text="${returned}"></p>
+                </div>
                 <div class="table-main table-responsive">
                     <table class="table">
                         <thead>
                         <tr>
                             <th class="order-date">Order Date</th>
-                            <th>Delivery Date</th>
+                            <th class="name-pr">Delivery Date</th>
+                            <th class="name-pr">Accepted</th>
                             <th class="price-pr">Order Status</th>
-
                             <th class="quantity-box">Quantity</th>
-                            <th>Total Price</th>
+                            <th class="price-pr">Total Price</th>
                             <th class="total-pr">Payment Method</th>
                             <th>Action</th>
                         </tr>
@@ -51,6 +54,9 @@
                         <tr th:each="order : ${orders}">
                             <td class="order-date">
                                 <span th:text="${#temporals.format(order.createdAt, 'dd-MM-yyyy HH:mm')}"></span>
+                            </td>
+                            <td class="order-date">
+                                <span th:text="${#temporals.format(order.deliveredAt, 'dd-MM-yyyy HH:mm')}"></span>
                             </td>
                             <td class="name-pr">
                                 <a th:if="${order.accepted == true}" href="#">
@@ -71,7 +77,12 @@
                                 <span th:text="${order.paymentMethod}"></span>
                             </td>
                             <td>
-                                <a th:href="@{/customer/cancel-order/{id}(id = ${order.id})}" class="button-cancel">Cancel</a>
+                                <a th:if="${order.orderStatus.name() != 'DELIVERED'}"
+                                   th:href="@{/customer/cancel-order/{id}(id = ${order.id})}"
+                                   class="button-cancel btn btn-primary">Cancel</a>
+                                <a th:if="${order.orderStatus.name() == 'DELIVERED'}"
+                                   th:href="@{/customer/return-order/{id}(id = ${order.id})}"
+                                   class="button-cancel btn btn-primary">Return</a>
                             </td>
                         </tr>
                         </tbody>

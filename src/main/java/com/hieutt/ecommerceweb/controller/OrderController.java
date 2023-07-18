@@ -67,6 +67,14 @@ public class OrderController {
         return "redirect:/customer/orders";
     }
 
+    @GetMapping("/customer/return-order/{id}")
+    public String returnOrder(@PathVariable(value = "id") Long orderId,
+                              RedirectAttributes redirectAttributes) {
+        orderService.returnOrder(orderId);
+        redirectAttributes.addFlashAttribute("returned", "You have returned the order 😭");
+        return "redirect:/customer/orders";
+    }
+
 
     // ADMIN
     @GetMapping("/admin/orders")

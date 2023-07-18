@@ -7,7 +7,9 @@ import com.hieutt.ecommerceweb.repository.CartItemRepository;
 import com.hieutt.ecommerceweb.repository.OrderItemRepository;
 import com.hieutt.ecommerceweb.repository.OrderRepository;
 import com.hieutt.ecommerceweb.repository.ShoppingCartRepository;
+import com.hieutt.ecommerceweb.service.EmailSenderService;
 import com.hieutt.ecommerceweb.service.OrderService;
+import org.hibernate.query.sql.internal.ParameterRecognizerImpl;
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
 
@@ -21,13 +23,15 @@ public class OrderServiceImpl implements OrderService {
     private final OrderItemRepository orderItemRepository;
     private final ShoppingCartRepository shoppingCartRepository;
     private final CartItemRepository cartItemRepository;
+    private final EmailSenderService senderService;
     private final ModelMapper modelMapper = new ModelMapper();
 
-    public OrderServiceImpl(OrderRepository orderRepository, OrderItemRepository orderItemRepository, ShoppingCartRepository shoppingCartRepository, CartItemRepository cartItemRepository) {
+    public OrderServiceImpl(OrderRepository orderRepository, OrderItemRepository orderItemRepository, ShoppingCartRepository shoppingCartRepository, CartItemRepository cartItemRepository, EmailSenderService senderService) {
         this.orderRepository = orderRepository;
         this.orderItemRepository = orderItemRepository;
         this.shoppingCartRepository = shoppingCartRepository;
         this.cartItemRepository = cartItemRepository;
+        this.senderService = senderService;
     }
 
     @Override
@@ -67,12 +71,22 @@ public class OrderServiceImpl implements OrderService {
         cart.setTotalPrice(0);
         shoppingCartRepository.save(cart);
 
+        // send mail to customer
+        sendMail(user.getEmail(),
+                "[The Bookshelf] PLACED ORDER SUCCESSFULLY",
+                "Dear " + user.getFirstName() + user.getLastName() + ",\n" + "\n"
+                + "You have successfully placed an order from The Bookshelf 📚" + "\n"
+                + "Please patiently wait for us to accept your order 🙏" + "\n" + "\n"
+                + "From admin."
+        );
+
         return mapToDto(order);
     }
 
     @Override
     public List<OrderDto> getAllOrders() {
         List<Order> orders = orderRepository.findAll();
+        checkRefundExpiration(orders);
         return orders.stream()
                 .map(order -> mapToDto(order))
                 .collect(Collectors.toList());
@@ -109,6 +123,7 @@ public class OrderServiceImpl implements OrderService {
     @Override
     public List<OrderDto> getOrdersByUser(User user) {
         List<Order> orders = orderRepository.findOrdersByUser(user);
+        checkRefundExpiration(orders);
         return orders.stream()
                 .map(order -> mapToDto(order))
                 .collect(Collectors.toList());
@@ -120,6 +135,15 @@ public class OrderServiceImpl implements OrderService {
         order.setOrderStatus(OrderStatus.CANCELED);
         order.setUpdatedAt(LocalDateTime.now());
         orderRepository.save(order);
+
+        // send mail to customer
+        sendMail(order.getUser().getEmail(),
+                "[The Bookshelf] CANCELED ORDER SUCCESSFULLY",
+                "Dear " + order.getUser().getFirstName() + order.getUser().getLastName() + ",\n" + "\n"
+                        + "You have successfully canceled an order from The Bookshelf 📚" + "\n"
+                        + "Please let us know if you have any problems 🙇‍♂️" + "\n" + "\n"
+                        + "From admin."
+        );
     }
 
     @Override
@@ -129,6 +153,15 @@ public class OrderServiceImpl implements OrderService {
         order.setOrderStatus(OrderStatus.PACKAGING);
         order.setUpdatedAt(LocalDateTime.now());
         orderRepository.save(order);
+
+        // send mail to customer
+        sendMail(order.getUser().getEmail(),
+                "[The Bookshelf] YOUR ORDER IS ACCEPTED",
+                "Dear " + order.getUser().getFirstName() + order.getUser().getLastName() + ",\n" + "\n"
+                        + "An order of you from The Bookshelf has been accepted 🎉" + "\n"
+                        + "The books are being packaged 📦 and soon be delivered 🚚" + "\n" + "\n"
+                        + "From admin."
+        );
     }
 
     @Override
@@ -137,6 +170,15 @@ public class OrderServiceImpl implements OrderService {
         order.setOrderStatus(OrderStatus.REJECTED);
         order.setUpdatedAt(LocalDateTime.now());
         orderRepository.save(order);
+
+        // send mail to customer
+        sendMail(order.getUser().getEmail(),
+                "[The Bookshelf] YOUR ORDER IS REJECTED",
+                "Dear " + order.getUser().getFirstName() + order.getUser().getLastName() + ",\n" + "\n"
+                        + "An order of you from The Bookshelf has been rejected because ... 🙅‍♂️" + "\n"
+                        + "We're sorry about your order 😢" + "\n" + "\n"
+                        + "From admin."
+        );
     }
 
     @Override
@@ -145,6 +187,15 @@ public class OrderServiceImpl implements OrderService {
         if (status.equals("delivering")) {
             order.setOrderStatus(OrderStatus.DELIVERING);
             order.setUpdatedAt(LocalDateTime.now());
+
+            // send mail to customer
+            sendMail(order.getUser().getEmail(),
+                    "[The Bookshelf] ORDER IS BEING DELIVERED",
+                    "Dear " + order.getUser().getFirstName() + order.getUser().getLastName() + ",\n" + "\n"
+                            + "An order of you from The Bookshelf 📚 is being delivered 🚚" + "\n"
+                            + "Your books will soon come to your place 🏡" + "\n" + "\n"
+                            + "From admin."
+            );
         }
         if (status.equals("delivered")) {
             order.setOrderStatus(OrderStatus.DELIVERED);
@@ -153,8 +204,46 @@ public class OrderServiceImpl implements OrderService {
                 order.setPaidAt(LocalDateTime.now());
             }
             order.setUpdatedAt(LocalDateTime.now());
+
+            // send mail to customer
+            sendMail(order.getUser().getEmail(),
+                    "[The Bookshelf] ORDER HAS BEEN DELIVERED",
+                    "Dear " + order.getUser().getFirstName() + order.getUser().getLastName() + ",\n" + "\n"
+                            + "An order of you from The Bookshelf 📚 has been delivered to your place" + "\n"
+                            + "Take and enjoy 🕺" + "\n" + "\n"
+                            + "From admin."
+            );
         }
         orderRepository.save(order);
+    }
+
+    @Override
+    public void returnOrder(Long orderId) {
+        Order order = findOrderById(orderId);
+        order.setOrderStatus(OrderStatus.RETURNED);
+        order.setUpdatedAt(LocalDateTime.now());
+        orderRepository.save(order);
+
+        // send mail to customer
+        sendMail(order.getUser().getEmail(),
+                "[The Bookshelf] RETURNED ORDER SUCCESSFULLY",
+                "Dear " + order.getUser().getFirstName() + order.getUser().getLastName() + ",\n" + "\n"
+                        + "You have successfully returned an order from The Bookshelf 📚" + "\n"
+                        + "You will be soon refunded 💰" + "\n" + "\n"
+                        + "From admin."
+        );
+    }
+
+    private void checkRefundExpiration(List<Order> orders) {
+        orders.forEach(order -> {
+            if (order.getDeliveredAt().plusDays(7).isBefore(LocalDateTime.now()) && order.getOrderStatus().name().equals("DELIVERED")) {
+                order.setOrderStatus(OrderStatus.CLOSED);
+            }
+        });
+    }
+
+    private void sendMail(String receiver, String subject, String body) {
+        senderService.sendEmail(receiver, subject, body);
     }
 
     private Order findOrderById(Long id) {
