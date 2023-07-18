@@ -197,6 +197,14 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
+    public List<UserDto> getUsersByRole(Role role) {
+        List<User> users = userRepository.findUsersByRole(role);
+        return users.stream()
+                .map(user -> mapToDto(user))
+                .collect(Collectors.toList());
+    }
+
+    @Override
     public UserDto getUserById(Long id) {
         User user = findUserById(id);
         return mapToDto(user);

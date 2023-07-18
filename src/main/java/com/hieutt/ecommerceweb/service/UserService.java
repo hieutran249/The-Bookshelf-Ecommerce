@@ -4,6 +4,7 @@ import com.hieutt.ecommerceweb.dto.ChangePasswordDto;
 import com.hieutt.ecommerceweb.dto.RegisterDto;
 import com.hieutt.ecommerceweb.dto.ResetPasswordDto;
 import com.hieutt.ecommerceweb.dto.UserDto;
+import com.hieutt.ecommerceweb.entity.Role;
 import com.hieutt.ecommerceweb.entity.User;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -15,6 +16,7 @@ import java.util.Map;
 public interface UserService {
     UserDto createUser(UserDto userDto);
     List<UserDto> getAllUsers();
+    List<UserDto> getUsersByRole(Role role);
     UserDto getUserById(Long id);
     User getCurrentUser(Principal principal);
     Map<String, String> updateUser(Long id, UserDto userDto, MultipartFile image) throws IOException;

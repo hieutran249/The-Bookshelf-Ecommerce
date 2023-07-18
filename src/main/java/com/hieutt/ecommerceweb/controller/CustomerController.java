@@ -2,6 +2,8 @@ package com.hieutt.ecommerceweb.controller;
 
 import com.hieutt.ecommerceweb.dto.ChangePasswordDto;
 import com.hieutt.ecommerceweb.dto.UserDto;
+import com.hieutt.ecommerceweb.entity.Order;
+import com.hieutt.ecommerceweb.entity.Role;
 import com.hieutt.ecommerceweb.service.UserService;
 import jakarta.validation.Valid;
 import org.springframework.stereotype.Controller;
@@ -13,6 +15,7 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.io.IOException;
 import java.security.Principal;
+import java.util.List;
 import java.util.Map;
 
 @Controller
@@ -23,11 +26,18 @@ public class CustomerController {
         this.userService = userService;
     }
 
+    // ADMIN
     @GetMapping("/admin/customers")
-    public String getAllCustomers() {
-        return "/admin/customer";
+    public String getAllCustomers(Model model) {
+        List<UserDto> customers = userService.getUsersByRole(Role.CUSTOMER);
+        model.addAttribute("title", "Manage Books");
+        model.addAttribute("customers", customers);
+        model.addAttribute("size", customers.size());
+        return "/admin/customers";
     }
 
+
+    // CUSTOMER
     @GetMapping("/customer/my-account")
     public String getMyAccount(Model model, Principal principal) {
         String email = principal.getName();

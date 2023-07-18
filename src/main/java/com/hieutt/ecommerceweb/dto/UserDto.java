@@ -1,5 +1,6 @@
 package com.hieutt.ecommerceweb.dto;
 
+import com.hieutt.ecommerceweb.entity.Order;
 import com.hieutt.ecommerceweb.entity.Role;
 import com.hieutt.ecommerceweb.entity.ShoppingCart;
 import jakarta.validation.constraints.Email;
@@ -10,6 +11,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 
 @Data
@@ -28,4 +30,6 @@ public class UserDto {
     private String address;
     private String phoneNumber;
     private String image;
+    private List<Order> orders = new ArrayList<>();
+
 }

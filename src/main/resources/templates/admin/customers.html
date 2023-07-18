@@ -19,309 +19,79 @@
 
         <!-- Main Content -->
         <div id="content">
-
             <!-- Topbar -->
             <nav th:replace="~{admin-fragments :: topbar}"></nav>
             <!-- End of Topbar -->
 
+            <!-- Begin Page Content -->
             <div class="container-fluid">
-                <!-- Begin Page Content -->
-                <div th:if="${type == 'success'}" class="alert alert-success text-center">
-                    <p th:text="${detail}" class="text-center"></p>
-                </div>
-                <div th:if="${type == 'error'}" class="alert alert-danger text-center">
-                    <p th:text="${detail}" class="text-center"></p>
-                </div>
+<!--                <div th:if="${type == 'success'}" class="alert alert-success text-center">-->
+<!--                    <p th:text="${detail}" class="text-center"></p>-->
+<!--                </div>-->
 
-                <!-- Validation errors -->
-                <p class="alert alert-danger text-center" th:each="err : ${fieldErrors}" th:text="${err}"></p>
-
-                <h5>Add new book here 👇</h5>
-
-                <!-- Create Book Form -->
-                <form class="form-inline" th:action="@{/admin/books}" method="post" th:object="${book}"
-                      enctype="multipart/form-data">
-                    <div class="form-group mb-2">
-                        <input type="text"
-                               class="form-control"
-                               id="title"
-                               name="title"
-                               th:field="*{title}"
-                               placeholder="Title"
-                        >
-                    </div>
-                    <div class="form-group mb-2 ml-3">
-                        <input type="text"
-                               class="form-control"
-                               id="description"
-                               name="description"
-                               th:field="*{description}"
-                               placeholder="Description"
-                        >
-                    </div>
-                    <div class="form-group mb-2 ml-3">
-                        <input type="text"
-                               class="form-control"
-                               id="author"
-                               name="author"
-                               th:field="*{author}"
-                               placeholder="Author"
-                        >
-                    </div>
-                    <div class="form-group mb-2 ml-3">
-                        <input type="text"
-                               class="form-control"
-                               id="price"
-                               name="price"
-                               th:field="*{price}"
-                               placeholder="Price"
-                        >
-                    </div>
-                    <div class="form-group mb-2 ml-3">
-                        <input type="number"
-                               class="form-control"
-                               id="quantity"
-                               name="quantity"
-                               min="1"
-                               th:value="1"
-                               th:field="*{quantity}"
-                               placeholder="Quantity"
-                        >
-                    </div>
-                    <div class="form-group mb-2 ml-3">
-                        <input type="text"
-                               class="form-control"
-                               id="publishedYear"
-                               name="publishedYear"
-                               th:field="*{publishedYear}"
-                               placeholder="Publish year"
-                        >
-                    </div>
-                    <div class="form-group mb-2 ml-3">
-                        <select class="form-control"
-                                id="category"
-                                name="category"
-                                th:field="*{category}"
-                        >
-                            <option th:each="category : ${categories}" th:value="${category.id}"
-                                    th:text="${category.name}"/>
-                        </select>
-                    </div>
-                    <div class="form-group mb-2 row">
-                        <label for="product-image" class="col-2">Image</label>
-                        <input type="file"
-                               class="form-control-file col"
-                               id="product-image"
-                               name="product-image"
-                        >
-                    </div>
-                    <button type="submit" class="btn btn-primary mb-2 ml-3">Create Book</button>
-                </form>
-
-                <p th:if="${size == 0}" class="ml-3">There is no book in the database 😕</p>
-
-                <!-- Book List -->
+                <!-- Order list -->
+                <p th:if="${size == 0}" class="ml-3">There is no customer in the database 😕</p>
                 <div class="card shadow mb-4">
                     <div class="card-header py-3">
-                        <h6 class="m-0 font-weight-bold text-primary">Book List</h6>
-                        <h6 class="text-info">Click on the headers to sort 😎</h6>
+                        <h6 class="m-0 font-weight-bold text-primary">Customer List</h6>
                     </div>
                     <div class="card-body">
                         <div class="table-responsive">
-                            <div class="row">
-                                <div class="col-md-3">
-                                    <span class="align-self-center" th:text="'Showing ' + ${size} + ' books out of '
-                                     + ${quantity} + ' in page ' + ${pageNo + 1} + '/' + ${totalPage}"></span>
-                                </div>
-                                <div class="mt-1 mb-3 col">
-                                    <form th:action="@{/admin/books/getBooksByCategory}" method="post" class="d-none d-sm-inline-block
-                                    form-inline float-right mr-auto ml-md-3 my-2 my-md-0 mw-100" th:object="${book}">
-                                        <div class="input-group">
-                                            <select class="form-control" th:field="*{category}">
-                                                <option value="">All categories</option>
-                                                <option th:each="category : ${categories}" th:value="${category.id}"
-                                                        th:text="${category.name}"/>
-                                            </select>
-                                            <div class="input-group-append ml-sm-1">
-                                                <button class="btn btn-primary" type="submit">
-                                                    <i class="fas fa-filter"></i>
-                                                </button>
-                                            </div>
-                                        </div>
-                                    </form>
-                                </div>
-                                <div class="mt-1 mb-3 col-md-4">
-                                    <form th:action="@{/admin/books/search}" method="get" class="d-none d-sm-inline-block
-                                    form-inline float-right mr-auto ml-md-3 my-2 my-md-0 mw-100">
-                                        <div class="input-group">
-                                            <input type="text" class="form-control bg-light border-0 pr-xl-5"
-                                                   placeholder="Search for..."
-                                                   aria-label="Search" aria-describedby="basic-addon2"
-                                                   id="search"
-                                                   name="keyword"
-                                            >
-                                            <div class="input-group-append ml-sm-1">
-                                                <button class="btn btn-primary" type="submit">
-                                                    <i class="fas fa-search fa-sm"></i>
-                                                </button>
-                                            </div>
-                                        </div>
-                                    </form>
-                                </div>
-                            </div>
-
-
-                            <table class="table table-striped" th:if="${size > 0}" id="tableData"
+                            <table class="table table-striped" th:if="${size > 0}"
                                    style="width: 100%; border-spacing: 0">
                                 <thead>
-                                <tr>
-                                    <th scope="col" data-toggle="tooltip" data-placement="top" title="Sort by ID">
-                                        <a th:if="${param.sortBy != null}" th:href="@{/admin/books}">ID</a>
-                                        <a th:if="${param.sortBy == null and param.sortDir == null}"
-                                           th:href="@{'/admin/books?sortDir=' + 'desc'}">ID</a>
-                                        <a th:if="${param.sortBy == null and param.sortDir != null}"
-                                           th:href="@{/admin/books}">ID</a>
-                                    </th>
-                                    <th scope="col" data-toggle="tooltip" data-placement="top" title="Sort by Title">
-                                        <a th:if="${!#strings.equals(param.sortBy, 'title')}"
-                                           th:href="@{'/admin/books?sortBy=' + 'title'}">Title</a>
-                                        <a th:if="${#strings.equals(param.sortBy, 'title') and param.sortDir == null}"
-                                           th:href="@{'/admin/books?sortBy=' + 'title' + '&sortDir=' + 'desc'}">Title</a>
-                                        <a th:if="${#strings.equals(param.sortBy, 'title') and param.sortDir != null}"
-                                           th:href="@{'/admin/books?sortBy=' + 'title'}">Title</a>
-                                    </th>
-                                    <th scope="col" data-toggle="tooltip" data-placement="top"
-                                        title="Sort by Description is not available">Description
-                                    </th>
-                                    <th scope="col" data-toggle="tooltip" data-placement="top" title="Sort by Author">
-                                        <a th:if="${!#strings.equals(param.sortBy, 'author')}"
-                                           th:href="@{'/admin/books?sortBy=' + 'author'}">Author</a>
-                                        <a th:if="${#strings.equals(param.sortBy, 'author') and param.sortDir == null}"
-                                           th:href="@{'/admin/books?sortBy=' + 'author' + '&sortDir=' + 'desc'}">Author</a>
-                                        <a th:if="${#strings.equals(param.sortBy, 'author') and param.sortDir != null}"
-                                           th:href="@{'/admin/books?sortBy=' + 'author'}">Author</a>
-                                    </th>
-                                    <th scope="col" data-toggle="tooltip" data-placement="top"
-                                        title="Sort by Published Year">
-                                        <a th:if="${!#strings.equals(param.sortBy, 'publishedYear')}"
-                                           th:href="@{'/admin/books?sortBy=' + 'publishedYear'}">Published Year</a>
-                                        <a th:if="${#strings.equals(param.sortBy, 'publishedYear') and param.sortDir == null}"
-                                           th:href="@{'/admin/books?sortBy=' + 'publishedYear' + '&sortDir=' + 'desc'}">Published
-                                            Year</a>
-                                        <a th:if="${#strings.equals(param.sortBy, 'publishedYear') and param.sortDir != null}"
-                                           th:href="@{'/admin/books?sortBy=' + 'publishedYear'}">Published Year</a>
-                                    </th>
-                                    <th scope="col" data-toggle="tooltip" data-placement="top" title="Sort by Price">
-                                        <a th:if="${!#strings.equals(param.sortBy, 'price')}"
-                                           th:href="@{'/admin/books?sortBy=' + 'price'}">Price</a>
-                                        <a th:if="${#strings.equals(param.sortBy, 'price') and param.sortDir == null}"
-                                           th:href="@{'/admin/books?sortBy=' + 'price' + '&sortDir=' + 'desc'}">Price</a>
-                                        <a th:if="${#strings.equals(param.sortBy, 'price') and param.sortDir != null}"
-                                           th:href="@{'/admin/books?sortBy=' + 'price'}">Price</a>
-                                    </th>
-                                    <th scope="col" data-toggle="tooltip" data-placement="top" title="Sort by Quantity">
-                                        <a th:if="${!#strings.equals(param.sortBy, 'quantity')}"
-                                           th:href="@{'/admin/books?sortBy=' + 'quantity'}">Quantity</a>
-                                        <a th:if="${#strings.equals(param.sortBy, 'quantity') and param.sortDir == null}"
-                                           th:href="@{'/admin/books?sortBy=' + 'quantity' + '&sortDir=' + 'desc'}">Quantity</a>
-                                        <a th:if="${#strings.equals(param.sortBy, 'quantity') and param.sortDir != null}"
-                                           th:href="@{'/admin/books?sortBy=' + 'quantity'}">Quantity</a>
-                                    </th>
-                                    <th scope="col" data-toggle="tooltip" data-placement="top"
-                                        title="Sort by Image is not available">Image
-                                    </th>
-                                    <th scope="col" data-toggle="tooltip" data-placement="top"
-                                        title="Sort by Category is not available">Category
-                                    </th>
-                                    <th scope="col" data-toggle="tooltip" data-placement="top"
-                                        title="Sort by Deleted is not available">Deleted
-                                    </th>
-                                    <th scope="col">Update Book</th>
-                                    <th scope="col">Delete Book</th>
-                                </tr>
+                                    <tr>
+                                        <th scope="col">ID</th>
+                                        <th scope="col">Email</th>
+                                        <th scope="col">Firstname</th>
+                                        <th scope="col">Lastname</th>
+                                        <th scope="col">Address</th>
+                                        <th scope="col">Phone Number</th>
+                                        <th scope="col">Image</th>
+                                        <th scope="col">Order Quantity</th>
+                                    </tr>
                                 </thead>
                                 <tbody>
-                                <tr th:each="book : ${books}">
-                                    <th scope="row" th:text="${book.id}"></th>
-                                    <td th:text="${book.title}"></td>
-                                    <td th:text="${book.description}"></td>
-                                    <td th:text="${book.author}"></td>
-                                    <td th:text="${book.publishedYear}"></td>
-                                    <td th:text="${book.price}"></td>
-                                    <td th:text="${book.quantity}"></td>
-                                    <td>
-                                        <img class="" style="height: 100px; width: 60px;"
-                                             th:src="${book.image != null} ? 'data:image/jpeg;base64,' + ${book.image}
-                              : 'https://islandpress.org/sites/default/files/default_book_cover_2015.jpg'">
-                                    </td>
-                                    <td th:text="${book.category.getName()}"></td>
-                                    <td th:text="${book.deleted}"></td>
-                                    <td>
-                                        <a id="editButton"
-                                           th:href="@{/admin/books/update-form/{id}(id = ${book.id})}"
-                                           class="btn btn-warning">Update</a>
-                                    </td>
-                                    <td>
-                                        <button th:if="${!book.deleted}" type="button" class="btn btn-danger"
-                                                data-toggle="modal"
-                                                th:attr="data-target=${'#deleteModal' + book.id}"
-                                                th:attrappend="data-row=${book}">Delete
-                                        </button>
-                                        <button th:if="${book.deleted}" type="button" class="btn btn-success"
-                                                data-toggle="modal"
-                                                th:attr="data-target=${'#deleteModal' + book.id}"
-                                                th:attrappend="data-row=${book}">Restore
-                                        </button>
-                                    </td>
-                                </tr>
+                                    <tr th:each="customer : ${customers}">
+                                        <th scope="row" th:text="${customer.id}"></th>
+                                        <td th:text="${customer.email}"></td>
+                                        <td th:text="${customer.firstName}"></td>
+                                        <td th:text="${customer.lastName}"></td>
+                                        <td th:text="${customer.address}"></td>
+                                        <td th:text="${customer.phoneNumber}"></td>
+                                        <td>
+                                            <img th:if="${customer.getImage() != null}"
+                                                 th:src="'data:image/jpeg;base64,' + ${customer.getImage()}" width="50px" height="50px"
+                                                 alt="user-image" style="border-radius: 50%">
+                                            <!-- if user has no avatar -->
+                                            <img th:if="${customer.getImage() == null}" th:src="@{/img/undraw_profile.svg}" width="50px" height="50px"
+                                                 alt="user-image" style="border-radius: 50%">
+                                        </td>
+                                        <td th:text="${customer.orders.size()}"></td>
+                                    </tr>
                                 </tbody>
                             </table>
                         </div>
                     </div>
                 </div>
 
-                <!-- Pagination -->
-                <nav aria-label="..." th:class="float-right">
-                    <ul class="pagination">
-                        <li class="page-item" th:classappend="${pageNo == 0} ? 'disabled' : ''">
-                            <div th:if="${param.isEmpty()}">
-                                <a class="page-link" th:href="@{'/admin/books?pageNo=' + ${pageNo - 1}}" tabindex="-1">Previous</a>
-                            </div>
-                            <div th:if="${!param.isEmpty()}"
-                                 th:with="link='/admin/books?pageNo=' + ${pageNo - 1} + '&sortBy=' + ${param.sortBy} + '&sortDir=' + ${param.sortDir}">
-                                <a class="page-link" th:href="@{${link}}" tabindex="-1">Previous</a>
-                            </div>
-                        </li>
-                        <li th:each="i : ${#numbers.sequence(1, totalPage)}" th:if="${totalPage > 0}"
-                            th:classappend="${pageNo == i - 1 ? 'active' : ''}" class="page-item">
-                            <div th:if="${param.isEmpty()}">
-                                <a th:href="@{'/admin/books?pageNo=' + ${i - 1}}" class="page-link">
-                                    <span th:text="${i}"></span>
-                                </a>
-                            </div>
-                            <div th:if="${!param.isEmpty()}"
-                                 th:with="link='/admin/books?pageNo=' + ${i - 1} + '&sortBy=' + ${param.sortBy} + '&sortDir=' + ${param.sortDir}">
-                                <a th:href="@{${link}}" class="page-link">
-                                    <span th:text="${i}"></span>
-                                </a>
-                            </div>
-                        </li>
-                        <li th:if="${totalPage <= 0}">
-                            <span class="page-link">1</span>
-                        </li>
-                        <li class="page-item" th:classappend="${pageNo == totalPage - 1} ? 'disabled' : ''">
-                            <div th:if="${param.isEmpty()}">
-                                <a class="page-link" th:href="@{'/admin/books?pageNo=' + ${pageNo + 1}}"
-                                   tabindex="-1">Next</a>
-                            </div>
-                            <div th:if="${!param.isEmpty()}"
-                                 th:with="link='/admin/books?pageNo=' + ${pageNo + 1} + '&sortBy=' + ${param.sortBy} + '&sortDir=' + ${param.sortDir}">
-                                <a class="page-link" th:href="@{${link}}"
-                                   tabindex="-1">Next</a>
-                            </div>
-                        </li>
-                    </ul>
-                </nav>
+<!--                &lt;!&ndash; Pagination &ndash;&gt;-->
+<!--                <nav aria-label="..." th:class="float-right">-->
+<!--                    <ul class="pagination">-->
+<!--                        <li class="page-item" th:classappend="${pageNo == 0} ? 'disabled' : ''">-->
+<!--                            <a class="page-link" th:href="@{'/admin/categories?pageNo=' + ${pageNo - 1}}" tabindex="-1">Previous</a>-->
+<!--                        </li>-->
+<!--                        <li th:each="i : ${#numbers.sequence(1, totalPage)}"-->
+<!--                            th:classappend="${pageNo == i - 1 ? 'active' : ''}" class="page-item">-->
+<!--                            <a th:href="@{'/admin/categories?pageNo=' + ${i - 1}}" class="page-link">-->
+<!--                                <span th:text="${i}"></span>-->
+<!--                            </a>-->
+<!--                        </li>-->
+<!--                        <li class="page-item" th:classappend="${pageNo == totalPage - 1} ? 'disabled' : ''">-->
+<!--                            <a class="page-link" th:href="@{'/admin/categories?pageNo=' + ${pageNo + 1}}" tabindex="-1">Next</a>-->
+<!--                        </li>-->
+<!--                    </ul>-->
+<!--                </nav>-->
 
             </div>
 
@@ -348,34 +118,34 @@
 
 
 <!-- Edit Category Modal -->
-<div th:each="book : ${books}">
-    <div class="modal fade" th:attr="id=${'deleteModal' + book.id}">
-        <div class="modal-dialog" role="document">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 th:if="${!book.deleted}" class="modal-title">Delete Book</h5>
-                    <h5 th:if="${book.deleted}" class="modal-title">Restore Book</h5>
-                </div>
-                <div class="modal-body">
-                    <p th:if="${!book.deleted}">Are you sure you want to delete this book?</p>
-                    <p th:if="${book.deleted}">Are you sure you want to restore this book?</p>
-                </div>
-                <div class="modal-footer">
-                    <form th:if="${!book.deleted}" th:action="@{/admin/books/delete/{id}(id = ${book.id})}"
-                          th:object="${book}">
-                        <button type="submit" class=" btn btn-danger">Yes</button>
-                        <button type="button" class="btn btn-primary" data-dismiss="modal">Cancel</button>
-                    </form>
-                    <form th:if="${book.deleted}" th:action="@{/admin/books/restore/{id}(id = ${book.id})}"
-                          th:object="${book}">
-                        <button type="submit" class=" btn btn-danger">Yes</button>
-                        <button type="button" class="btn btn-primary" data-dismiss="modal">Cancel</button>
-                    </form>
-                </div>
-            </div>
-        </div>
-    </div>
-</div>
+<!--<div th:each="category : ${categories}">-->
+<!--    <div class="modal fade" th:attr="id=${'deleteModal' + category.id}">-->
+<!--        <div class="modal-dialog" role="document">-->
+<!--            <div class="modal-content">-->
+<!--                <div class="modal-header">-->
+<!--                    <h5 th:if="${!category.deleted}" class="modal-title">Delete Category</h5>-->
+<!--                    <h5 th:if="${category.deleted}" class="modal-title">Restore Category</h5>-->
+<!--                </div>-->
+<!--                <div class="modal-body">-->
+<!--                    <p th:if="${!category.deleted}">Are you sure you want to delete this category?</p>-->
+<!--                    <p th:if="${category.deleted}">Are you sure you want to restore this category?</p>-->
+<!--                </div>-->
+<!--                <div class="modal-footer">-->
+<!--                    <form th:if="${!category.deleted}" th:action="@{/admin/categories/delete/{id}(id = ${category.id})}"-->
+<!--                          th:object="${category}">-->
+<!--                        <button type="submit" class=" btn btn-danger">Yes</button>-->
+<!--                        <button type="button" class="btn btn-primary" data-dismiss="modal">Cancel</button>-->
+<!--                    </form>-->
+<!--                    <form th:if="${category.deleted}" th:action="@{/admin/categories/restore/{id}(id = ${category.id})}"-->
+<!--                          th:object="${category}">-->
+<!--                        <button type="submit" class=" btn btn-danger">Yes</button>-->
+<!--                        <button type="button" class="btn btn-primary" data-dismiss="modal">Cancel</button>-->
+<!--                    </form>-->
+<!--                </div>-->
+<!--            </div>-->
+<!--        </div>-->
+<!--    </div>-->
+<!--</div>-->
 <!-- End -->
 
 <!-- Scripts -->
