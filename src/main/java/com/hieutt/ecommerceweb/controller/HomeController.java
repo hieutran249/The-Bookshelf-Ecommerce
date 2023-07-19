@@ -69,7 +69,7 @@ public class HomeController {
         return "customer/contact-us";
     }
 
-    @PreAuthorize("hasRole('ADMIN')")
+    @PreAuthorize("hasAnyRole('ADMIN', 'SUPER_ADMIN')")
     @GetMapping("/admin")
     public String admin(Model model) {
         model.addAttribute("title", "Admin");

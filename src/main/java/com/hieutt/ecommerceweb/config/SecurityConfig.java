@@ -30,7 +30,7 @@ public class SecurityConfig {
                 .authorizeHttpRequests()
                 .requestMatchers(Constants.WHITELIST_ENDPOINTS).permitAll()
                 // all the urls that have the pattern /admin/** need to be ADMIN
-                .requestMatchers("/admin/**").hasAuthority("ADMIN")
+                .requestMatchers("/admin/**").hasAnyAuthority("ADMIN", "SUPER_ADMIN")
                 .anyRequest().authenticated()
 
                 .and()

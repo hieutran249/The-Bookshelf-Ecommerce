@@ -6,6 +6,7 @@ import com.hieutt.ecommerceweb.service.CategoryService;
 import com.hieutt.ecommerceweb.utils.Constants;
 import jakarta.validation.Valid;
 import org.springframework.data.domain.Page;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -21,6 +22,7 @@ import java.util.Objects;
 
 @Controller
 @RequestMapping("/admin/books")
+@PreAuthorize("hasAnyRole('ADMIN', 'SUPER_ADMIN')")
 public class AdminBookController {
     private final BookService bookService;
     private final CategoryService categoryService;

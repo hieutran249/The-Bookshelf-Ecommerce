@@ -8,6 +8,7 @@ import com.hieutt.ecommerceweb.entity.User;
 import com.hieutt.ecommerceweb.service.EmailSenderService;
 import com.hieutt.ecommerceweb.service.UserService;
 import jakarta.validation.Valid;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -31,10 +32,25 @@ public class AuthController {
         return "admin/login";
     }
 
+    @PreAuthorize("hasRole('SUPER_ADMIN')")
     @GetMapping("/register-admin")
     public String adminRegisterForm(Model model) {
         model.addAttribute("title", "Admin Register");
         model.addAttribute("register", new RegisterDto());
+        return "admin/register";
+    }
+
+    @PreAuthorize("hasRole('SUPER_ADMIN')")
+    @PostMapping("/do-register-admin")
+    public String registerAdmin(@Valid @ModelAttribute(value = "register") RegisterDto registerDto,
+                                BindingResult result,
+                                Model model) {
+        if (result.hasErrors()) {
+            return "admin/register";
+        }
+        Map<String, String> message = userService.createAdmin(registerDto);
+        model.addAttribute("type", message.get("type"));
+        model.addAttribute("detail", message.get("detail"));
         return "admin/register";
     }
 
@@ -50,25 +66,6 @@ public class AuthController {
         model.addAttribute("title", "Register");
         model.addAttribute("register", new RegisterDto());
         return "customer/register";
-    }
-
-//    @GetMapping("/forgot-password")
-//    public String customerForgotPasswordForm(Model model) {
-//        model.addAttribute("title", "Forgot Password");
-//        return "customer/forgot-password";
-//    }
-
-    @PostMapping("/do-register-admin")
-    public String registerAdmin(@Valid @ModelAttribute(value = "register") RegisterDto registerDto,
-                                BindingResult result,
-                                Model model) {
-        if (result.hasErrors()) {
-            return "admin/register";
-        }
-        Map<String, String> message = userService.createAdmin(registerDto);
-        model.addAttribute("type", message.get("type"));
-        model.addAttribute("detail", message.get("detail"));
-        return "admin/register";
     }
 
     @PostMapping("/register")

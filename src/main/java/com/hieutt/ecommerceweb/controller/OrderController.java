@@ -8,6 +8,7 @@ import com.hieutt.ecommerceweb.service.OrderService;
 import com.hieutt.ecommerceweb.service.ShoppingCartService;
 import com.hieutt.ecommerceweb.service.UserService;
 import jakarta.servlet.http.HttpSession;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -33,6 +34,7 @@ public class OrderController {
 
 
     // CUSTOMER
+    @PreAuthorize("hasRole('CUSTOMER')")
     @GetMapping("/customer/orders")
     public String getOrdersByUser(Model model, Principal principal) {
         User user = userService.getCurrentUser(principal);
@@ -41,6 +43,7 @@ public class OrderController {
         return "customer/orders";
     }
 
+    @PreAuthorize("hasRole('CUSTOMER')")
     @PostMapping("/customer/place-order")
     public String placeOrder(@RequestParam(value = "paymentMethod") String paymentMethod,
                              Principal principal,
@@ -59,6 +62,7 @@ public class OrderController {
         return "customer/orders";
     }
 
+    @PreAuthorize("hasRole('CUSTOMER')")
     @GetMapping("/customer/cancel-order/{id}")
     public String cancelOrder(@PathVariable(value = "id") Long orderId,
                               RedirectAttributes redirectAttributes) {
@@ -67,6 +71,7 @@ public class OrderController {
         return "redirect:/customer/orders";
     }
 
+    @PreAuthorize("hasRole('CUSTOMER')")
     @GetMapping("/customer/return-order/{id}")
     public String returnOrder(@PathVariable(value = "id") Long orderId,
                               RedirectAttributes redirectAttributes) {
@@ -77,6 +82,7 @@ public class OrderController {
 
 
     // ADMIN
+    @PreAuthorize("hasAnyRole('ADMIN', 'SUPER_ADMIN')")
     @GetMapping("/admin/orders")
     public String getAllOrders(Model model) {
         List<OrderDto> orders = orderService.getAllOrders();
@@ -86,6 +92,7 @@ public class OrderController {
         return "admin/orders";
     }
 
+    @PreAuthorize("hasAnyRole('ADMIN', 'SUPER_ADMIN')")
     @GetMapping("/admin/orders/accept/{id}")
     public String acceptOrder(@PathVariable("id") Long orderId,
                               RedirectAttributes redirectAttributes) {
@@ -94,6 +101,7 @@ public class OrderController {
         return "redirect:/admin/orders";
     }
 
+    @PreAuthorize("hasAnyRole('ADMIN', 'SUPER_ADMIN')")
     @GetMapping("/admin/orders/reject/{id}")
     public String rejectOrder(@PathVariable("id") Long orderId,
                               RedirectAttributes redirectAttributes) {
@@ -102,6 +110,7 @@ public class OrderController {
         return "redirect:/admin/orders";
     }
 
+    @PreAuthorize("hasAnyRole('ADMIN', 'SUPER_ADMIN')")
     @GetMapping("/admin/orders/detail/{id}")
     public String getOrderDetail(@PathVariable("id") Long orderId,
                                  Model model) {
@@ -121,6 +130,7 @@ public class OrderController {
         return "admin/order-detail";
     }
 
+    @PreAuthorize("hasAnyRole('ADMIN', 'SUPER_ADMIN')")
     @GetMapping("/admin/orders/nextStage/{id}")
     public String doNextStage(@RequestParam(value = "status") String status,
                               @PathVariable(value = "id") Long orderId) {

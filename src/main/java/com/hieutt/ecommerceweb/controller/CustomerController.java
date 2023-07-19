@@ -6,6 +6,7 @@ import com.hieutt.ecommerceweb.entity.Order;
 import com.hieutt.ecommerceweb.entity.Role;
 import com.hieutt.ecommerceweb.service.UserService;
 import jakarta.validation.Valid;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -27,6 +28,7 @@ public class CustomerController {
     }
 
     // ADMIN
+    @PreAuthorize("hasAnyRole('ADMIN', 'SUPER_ADMIN')")
     @GetMapping("/admin/customers")
     public String getAllCustomers(Model model) {
         List<UserDto> customers = userService.getUsersByRole(Role.CUSTOMER);
@@ -38,6 +40,7 @@ public class CustomerController {
 
 
     // CUSTOMER
+    @PreAuthorize("hasRole('CUSTOMER')")
     @GetMapping("/customer/my-account")
     public String getMyAccount(Model model, Principal principal) {
         String email = principal.getName();
@@ -48,6 +51,7 @@ public class CustomerController {
         return "customer/my-account";
     }
 
+    @PreAuthorize("hasRole('CUSTOMER')")
     @PostMapping("/customer/update-info")
     public String updateMyAccount(@Valid @ModelAttribute(value = "user") UserDto userDto,
                                   BindingResult result,
@@ -69,6 +73,7 @@ public class CustomerController {
         return "redirect:/customer/my-account";
     }
 
+    @PreAuthorize("hasRole('CUSTOMER')")
     @PostMapping("/customer/update-password")
     public String updateMyPassword(@RequestParam(value = "id") Long userId,
                                    @Valid @ModelAttribute(value = "password") ChangePasswordDto passwordDto,

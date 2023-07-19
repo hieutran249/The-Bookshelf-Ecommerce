@@ -4,6 +4,7 @@ import com.hieutt.ecommerceweb.dto.CategoryDto;
 import com.hieutt.ecommerceweb.service.CategoryService;
 import com.hieutt.ecommerceweb.utils.Constants;
 import jakarta.validation.Valid;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -18,6 +19,7 @@ import java.util.stream.Collectors;
 
 @Controller
 @RequestMapping("/admin/categories")
+@PreAuthorize("hasAnyRole('ADMIN', 'SUPER_ADMIN')")
 public class CategoryController {
     private final CategoryService categoryService;
 
